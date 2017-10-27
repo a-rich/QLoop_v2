@@ -1,12 +1,15 @@
 from flask import *
-from flask_pymongo import PyMongo
 from functools import wraps
 from itsdangerous import URLSafeTimedSerializer
 from util import send_email
 
 app = Flask(__name__)                                  # Actual Flask app.
-mongo = PyMongo(app)                                   # Flask MongoDB wrapper.
 app.config['SECRET_KEY'] = ':iw=PO5}H],oEtSa'          # Used for creating session.
+app.config['MONGOALCHEMY_DATABASE'] = 'database'       # Configure database name.
+
+from models import *
+
+db.init_app(app)                                       # Initialize MongoAlchemy.
 ts = URLSafeTimedSerializer(app.config['SECRET_KEY'])  # Used to create confirmation email.
 
 def login_required(page):
@@ -33,34 +36,35 @@ def signup():
     """
 
     if request.method == 'POST':
-        email = request.form['email']                  # User supplied email.
-        password = request.form['password']            # User supplied password.
+        email = request.form['email']                       # User supplied email.
+        password = request.form['password']                 # User supplied password.
 
-        if mongo.db.users.find_one({'email': email}):  # Check if user already has an account.
+        if User.query.filter(User.email == email).first():  # Check if user already has an account.
             flash('You already have an account.')
             return redirect(url_for('login'))
 
         token = ts.dumps(
                 email,
-                salt='email-confirm-key')              # Token for confirmation email.
+                salt='email-confirm-key')                   # Token for confirmation email.
 
-        confirm_url = url_for(                         # Generates url embedded in
-                'confirm_email',                       # confirmation email.
+        confirm_url = url_for(                              # Generates url embedded in
+                'confirm_email',                            # confirmation email.
                 token=token,
                 _external = True)
 
-        subject = 'confirm your email'                 # Email subject.
-        html = render_template(                        # Email body.
+        subject = 'confirm your email'                      # Email subject.
+        html = render_template(                             # Email body.
                 'account_activation.html',
                 confirm_url=confirm_url)
 
-        send_email(email, subject, html)               # Calls send_email function in utils.py.
+        send_email(email, subject, html)                    # Calls send_email function in utils.py.
 
-        mongo.db.users.insert_one({                    # Creates partial DB entry for new user.
-            'email': email,
-            'password': password,
-            'email_confirmed': False
-        })
+
+        new_user = User(                                    # Creates partial DB entry for new user.
+                email=email,
+                password=password,
+                email_confirmed=False)
+        new_user.save()
 
         flash('Please confirm your email (check the spam folder) to log in')
         return redirect(url_for('login'))
@@ -79,13 +83,9 @@ def confirm_email(token):
     except:
         abort(404)
 
-    mongo.db.users.update({               # Update the user's record to show
-        'email': email                    # that they confirmed their email.
-        }, {
-            '$set': {
-                'email_confirmed': True
-                }
-            }, upsert=False)
+    user = User.query.filter(User.email == email).first()
+    user.email_confirmed = True
+    user.save()
 
     return redirect(url_for('login'))
 
@@ -112,20 +112,12 @@ def login():
         password = request.form['password']
 
         if email:
-            user = {
-                    'email': email,
-                    'password': password
-                    }
+            user = User.query.filter(User.email == email).first()
         else:
-            user = {
-                    'username': username,
-                    'password': password
-                    }
-
-        user = mongo.db.users.find_one(user)                # Check if user is in DB.
+            user = User.query.filter(User.username == username).first()
 
         if (username == 'admin' and password == 'admin') \
-                or (user and user['email_confirmed']):
+                or (user and user.email_confirmed):
             session['username'] = username
             session['logged_in'] = True
             flash('Logged in as {}.'.format(username))
