@@ -6,6 +6,7 @@ Development
 
 ### Virtual Environment ###
 **Activate:** `source .env/bin/activate`
+
 **Deactivate:** `deactivate`
 
 ### Start Server ###
