@@ -1,0 +1,10 @@
+{% extends 'login.html' %}
+{% block form %}
+    <input type='text' placeholder='Username/Email' name='username' value='{{
+        request.form.username}}'>
+    <input type='password' placeholder='Password' name='password'>
+    <input class='btn btn-default' type='submit' value='login'>
+    <br>
+    <a href='/signup'>Not registered? Sign up here.</a>
+    <a href='/account_recovery'>Not registered? Sign up here.</a>
+{% endblock %}

@@ -1,0 +1,7 @@
+{% extends 'login.html' %}
+{% block form %}
+    <input type='text' placeholder='Email' name='email' value='{{
+        request.form.email }}'>
+    <input type='password' placeholder='Password' name='password'>
+    <input class='btn btn-default' type='submit' value='sign up'>
+{% endblock %}

@@ -8,18 +8,20 @@
         <header>
             <div class='navbar navbar-inverse'>
                 <div class='navbar-inner'>
-                    <a class='jumbo nav' href='/'>QLoop</a>
-                    <ul class='list-inline'>
-                        <li><a href='/'>Profile</a></li>
-                        <li><a href='/friends'>Friends</a></li>
-                        <li><a href='/create_booth'>Create Booth</a></li>
-                        <li><a href='/public_booths'>Public Booths</a></li>
-                        <li><a href='/settings'>Settings</a></li>
+                    <a class='list-inline' href='/'>QLoop</a>
+                    <ul class='list-inline-item'>
+                        <li class='list-inline-item'><a href='/profile'>Profile</a></li>
+                        <li class='list-inline-item'><a href='/create_booth'>Create Booth</a></li>
+                        <li class='list-inline-item'><a href='/public_booths'>Public Booths</a></li>
+                        <li class='list-inline-item'><a href='/logout'>Logout</a></li>
                     </ul>
                 </div>
             </div>
         </header>
         <div class='container'>
+            {% for message in get_flashed_messages() %}
+                {{ message }}
+            {% endfor %}
             {% block content %}
             {% endblock %}
         </div>
