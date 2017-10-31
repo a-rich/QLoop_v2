@@ -28,3 +28,11 @@ Log in as admin using username 'admin' and password 'admin'.
    * edit email
    * add/remove friends
 2. Swap out Flask's Werkzeug server with nginx
+
+
+### Setting up react ###
+1. go into the client folder using terminal
+2. 'yarn install'
+
+### Starting server ###
+'yarn start'
