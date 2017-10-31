@@ -7,7 +7,7 @@ from itsdangerous import URLSafeTimedSerializer
 
 ts = URLSafeTimedSerializer(app.config['SECRET_KEY'])  # Used to create confirmation email.
 
-def log_in_required(page):
+def login_required(page):
     """
         Decorator that enforces that the user be logged in before executing the
         decorated function.
@@ -22,7 +22,7 @@ def log_in_required(page):
             return redirect(url_for('log_in'))
     return wrap
 
-@app.route('/sign_up/', methods=['GET', 'POST'])
+@app.route('/signup/', methods=['GET', 'POST'])
 def sign_up():
     """
         Accepts user email and password, tokenizes the email, sends an account
@@ -62,7 +62,7 @@ def sign_up():
         new_user.save()
         flash('Please confirm your email (check the spam folder) to log in.')
         return redirect(url_for('log_in'))
-    return render_template('sign_up_form.html')
+    return render_template('signup_form.html')
 
 @app.route('/confirm/<token>')
 def confirm_email(token):
@@ -84,12 +84,12 @@ def confirm_email(token):
     return redirect(url_for('log_in'))
 
 @app.route('/')
-@app.route('/log_in/', methods=['GET', 'POST'])
+@app.route('/login/', methods=['GET', 'POST'])
 def log_in():
     """
         Home/login view. Checks if the user has an active session cookie and
-        logs them in if so. Otherwise renders the log in template. Upon
-        submitting the log in form, checks to see if the user is validated,
+        logs them in if so. Otherwise renders the login template. Upon
+        submitting the login form, checks to see if the user is validated,
         creates a session for them, then redirects them to their profile page.
     """
 
@@ -118,10 +118,10 @@ def log_in():
             return redirect(url_for('profile'))
         else:
             error = 'Invalid credentials. Please try again.'
-    return render_template('log_in_form.html', error=error)
+    return render_template('login_form.html', error=error)
 
 @app.route('/logout/')
-@log_in_required
+@login_required
 def logout():
     """
         Removes user session.
@@ -196,7 +196,7 @@ def reset_password(token):
     return render_template('password_reset.html')
 
 @app.route('/profile/')
-@log_in_required
+@login_required
 def profile():
     """
         Renders profile view.
@@ -205,7 +205,7 @@ def profile():
     return render_template('profile.html')
 
 @app.route('/create_booth/')
-@log_in_required
+@login_required
 def create_booth():
     """
         Renders booth creation view.
@@ -213,7 +213,7 @@ def create_booth():
     return render_template('create_booth.html')
 
 @app.route('/public_booths/')
-@log_in_required
+@login_required
 def public_booths():
     """
         Renders public booths view.

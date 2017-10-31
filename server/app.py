@@ -9,4 +9,4 @@ from views import *
 db.init_app(app)                                       # Initialize MongoAlchemy.
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, threaded=True)
