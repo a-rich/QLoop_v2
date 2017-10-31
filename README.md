@@ -32,7 +32,7 @@ Log in as admin using username 'admin' and password 'admin'.
 
 ### Setting up react ###
 1. go into the client folder using terminal
-2. 'yarn install'
+2. `yarn install`
 
 ### Starting server ###
-'yarn start'
+`yarn start`
