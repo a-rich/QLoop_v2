@@ -9,7 +9,7 @@ def send_email(user_email, subject, html):
 
     msg = MIMEText(html, 'html')
     msg['To'] = email.utils.formataddr(('Recipient', user_email))
-    msg['From'] = email.utils.formataddr(('QLoop Sign up', 'qloop.signup@gmail.com'))
+    msg['From'] = email.utils.formataddr(('QLoop', 'qloop.signup@gmail.com'))
     msg['Subject'] = subject
 
     server = smtplib.SMTP('smtp.gmail.com', 587)
