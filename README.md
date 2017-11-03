@@ -21,7 +21,7 @@ Development
 
 * `source .env/bin/activate`
 
-* `python -m pip install Flask PyMongo Flask-MongoAlchemy itsdangerous`
+* `python -m pip install Flask PyMongo Flask-MongoAlchemy Flask-WTF itsdangerous`
 
 ### Start Server ###
 `python app.py`
