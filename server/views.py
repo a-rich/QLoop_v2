@@ -36,6 +36,7 @@ def sign_up():
         username = request.form['username']                 # User supplied email.
         password = request.form['password']                 # User supplied password.
 
+        """
         if User.query.filter(User.email == email).first():  # Check if email already has an account.
             flash('This email has already been registered with an account.')
             return redirect(url_for('sign_up'))
@@ -43,6 +44,7 @@ def sign_up():
         if User.query.filter(User.email == email).first():  # Check if username already has an account.
             flash('This username has already been registered with an account.')
             return redirect(url_for('sign_up'))
+        """
 
         token = ts.dumps(
                 email,
@@ -69,7 +71,12 @@ def sign_up():
         new_user.save()
         flash('Please confirm your email (check the spam folder) to log in.')
         return redirect(url_for('log_in'))
-    flash('Please fill out all fields to create an account.')
+    if form.email.errors:
+        [flash('Email error: ' + e) for e in form.email.errors]
+    if form.username.errors:
+        [flash('Username error: ' + e) for e in form.username.errors]
+    if form.password.errors:
+        [flash('Password error: ' + e) for e in form.password.errors]
     return render_template('signup_form.html', form=form)
 
 @app.route('/confirm/<token>')
