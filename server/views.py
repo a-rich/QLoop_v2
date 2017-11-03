@@ -167,7 +167,7 @@ def account_recovery():
 
             send_email(user.email, subject, html)               # Calls send_email function in utils.py.
 
-            flash('Please click the password reset link that was sent to your email (check the spam folder) to log in.')
+            flash('Please click the password reset link that was sent to your email (check the spam folder) to reset your password.')
             return redirect(url_for('log_in'))
         else:
             flash('Invalid email or username.')
