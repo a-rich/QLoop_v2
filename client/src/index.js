@@ -7,7 +7,7 @@ import promise from 'redux-promise';
 
 import './index.css';
 import reducers from './reducers';
-//import App from './App';
+import SignUp from './containers/signup';
 import Navbar from './components/navbar'
 
 import registerServiceWorker from './registerServiceWorker';
@@ -17,14 +17,14 @@ const createStoreWithMiddleware = applyMiddleware(promise)(createStore);
 
 ReactDOM.render(
     <Provider store={createStoreWithMiddleware(reducers)}>
-    <BrowserRouter>
-    <div>
-        <Navbar />
-        <Switch>
-            
-        </Switch>
-    </div>
-    </BrowserRouter>
+        <BrowserRouter>
+            <div>
+                <Navbar />
+                <Switch>
+                    <Route to="/" component={SignUp} />
+                </Switch>
+            </div>
+        </BrowserRouter>
     </Provider>
   , document.getElementById('root'));
 registerServiceWorker();
