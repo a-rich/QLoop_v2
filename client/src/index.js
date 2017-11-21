@@ -8,7 +8,7 @@ import promise from 'redux-promise';
 import './index.css';
 import reducers from './reducers';
 import SignUp from './containers/signup';
-import Navbar from './components/navbar'
+import NavbarComponent from './components/navbar_component'
 
 import registerServiceWorker from './registerServiceWorker';
 
@@ -19,7 +19,7 @@ ReactDOM.render(
     <Provider store={createStoreWithMiddleware(reducers)}>
         <BrowserRouter>
             <div>
-                <Navbar />
+                <NavbarComponent />
                 <Switch>
                     <Route to="/" component={SignUp} />
                 </Switch>

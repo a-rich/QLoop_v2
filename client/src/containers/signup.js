@@ -2,25 +2,27 @@ import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { FormGroup, ControlLabel, FormControl, HelpBlock, Button } from 'react-bootstrap';
 
 import { validateEmail } from '../utils/misc';
 
 class SignUp extends Component {
     renderField(field) {
         const { meta: { touched, error } } = field;
-        const className=`form-group ${touched && error ? 'is-invalid': ""}`;
+        const validationState = touched && error ? 'error': null;
 
         return(
-            <div className={className}>
-                <label>{field.label}: </label>
-                <input
-                    className="form-control"
-                    type={field.type}
-                    {...field.input}
-                />
-                <div className="text-help">
-                    {touched ? error : ""}
-                </div>
+            <div>
+                <FormGroup validationState={validationState}>
+                    <ControlLabel>{field.label}: </ControlLabel>
+                    <FormControl
+                        type={field.type}
+                        {...field.input}
+                    />
+                    <HelpBlock>
+                        {touched ? error : ""}
+                    </HelpBlock>
+                </FormGroup>
             </div>
         );
     }
@@ -65,9 +67,9 @@ class SignUp extends Component {
                         type="password"
                         component={this.renderField}
                     />
-                    <button type="submit" className="btn btn-primary">
+                    <Button type="submit" className="btn btn-primary">
                         Submit
-                    </button>
+                    </Button>
                     <Link to="/" className="btn btn-danger">
                         Cancel
                     </Link>
