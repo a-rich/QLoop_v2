@@ -5,8 +5,9 @@ import { Link } from 'react-router-dom';
 import { FormGroup, ControlLabel, FormControl, HelpBlock, Button } from 'react-bootstrap';
 
 import { validateEmail } from '../utils/misc';
+import { createUser } from '../actions';
 
-class SignUp extends Component {
+class SignupForm extends Component {
     renderField(field) {
         const { meta: { touched, error } } = field;
         const validationState = touched && error ? 'error': null;
@@ -28,7 +29,7 @@ class SignUp extends Component {
     }
 
     onSubmit(values) {
-        console.log(values);
+        this.props.createUser(values);
     }
 
     render() {
@@ -90,8 +91,22 @@ function validate(values) {
     }
     if (!values.email) {
         errors.email = "Please Enter Your Email";
-    }else if (!validateEmail(values.email)) {
+    } else if (!validateEmail(values.email)) {
         errors.email="Email is not valid";
+    }
+
+    if (!values.password) {
+        errors.password = "Password Cannot Be Empty";
+    } else if (values.password.length < 8) {
+        errors.password = "Password Must Be 8 Characters Long";
+    } else if (! /^[a-zA-Z0-9]+$/.test(values.password)) {
+        errors.password = "Password Must Be Alphanumeric only";
+    } else if (! /[A-Z]/.test(values.password)) {
+        errors.password = "Password Must contain 1 UpperCase letter";
+    }
+
+    if (values.password !== values.confirmPassword) {
+        errors.confirmPassword = "Password and Confirm Password Doesn't Match";
     }
 
 
@@ -101,4 +116,6 @@ function validate(values) {
 export default reduxForm({
     validate,
     form: 'SignUpForm'  // must be unique
-})(SignUp);
+})(
+    connect(null, {createUser})(SignupForm)
+);

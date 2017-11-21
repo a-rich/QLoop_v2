@@ -7,7 +7,7 @@ import promise from 'redux-promise';
 
 import './index.css';
 import reducers from './reducers';
-import SignUp from './containers/signup';
+import SignupForm from './containers/signup_form';
 import NavbarComponent from './components/navbar_component'
 
 import registerServiceWorker from './registerServiceWorker';
@@ -21,7 +21,7 @@ ReactDOM.render(
             <div>
                 <NavbarComponent />
                 <Switch>
-                    <Route to="/" component={SignUp} />
+                    <Route to="/" component={SignupForm} />
                 </Switch>
             </div>
         </BrowserRouter>
