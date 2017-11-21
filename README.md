@@ -9,14 +9,28 @@ Development
 
 **Deactivate:** `deactivate`
 
+**Recreate virtual environment:**
+
+* `cd QLoop/server`
+
+* `rm -rf .env`
+
+* `python -m pip install virtualenv`
+
+* `virtualenv .env`
+
+* `source .env/bin/activate`
+
+* `python -m pip install Flask PyMongo Flask-MongoAlchemy Flask-WTF itsdangerous`
+
 ### Start Server ###
-`python2.7 app.py`
+`python app.py`
 
 Visit the web page at `localhost:5000`.
 
 ### Admin  ###
 The admin is hardcoded into the log in route and bypasses authentication from
-the `users` collection of the database.
+the `Users` collection of the database.
 
 Log in as admin using username 'admin' and password 'admin'.
 
@@ -29,9 +43,8 @@ Log in as admin using username 'admin' and password 'admin'.
    * add/remove friends
 2. Swap out Flask's Werkzeug server with nginx
 
-
-### Setting up react ###
-1. go into the client folder using terminal
+### Setting up React ###
+1. Go into the client folder using terminal
 2. `yarn install`
 
 ### Starting server ###

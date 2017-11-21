@@ -10,7 +10,7 @@
                 <div class='navbar-inner'>
                     <a class='list-inline' href='/'>QLoop</a>
                     <ul class='list-inline-item'>
-                        <li class='list-inline-item'><a href='/profile'>Profile</a></li>
+                        <li class='list-inline-item'><a href='/profile/{{ username }}'>My QLoop</a></li>
                         <li class='list-inline-item'><a href='/create_booth'>Create Booth</a></li>
                         <li class='list-inline-item'><a href='/public_booths'>Public Booths</a></li>
                         <li class='list-inline-item'><a href='/logout'>Logout</a></li>
@@ -20,7 +20,7 @@
         </header>
         <div class='container'>
             {% for message in get_flashed_messages() %}
-                {{ message }}
+                {{ message }} <br>
             {% endfor %}
             {% block content %}
             {% endblock %}
