@@ -1,7 +1,8 @@
+import json
 from __main__ import app
 from flask import request, session, redirect, url_for, render_template, flash
 from models import db, User
-from forms import SignupForm
+#from forms import SignupForm
 from functools import wraps
 from util import send_email
 from itsdangerous import URLSafeTimedSerializer
@@ -26,25 +27,16 @@ def login_required(page):
 @app.route('/signup/', methods=['GET', 'POST'])
 def sign_up():
     """
-        Accepts username,  email and password, tokenizes the email, sends an
+        Accepts username, email and password, tokenizes the email, sends an
         account activation email to the user, then enters the user into the
         database with the field EMAIL_CONFIRMED set to FALSE.
     """
-    form = SignupForm()
-    if form.validate_on_submit():
+    #form = SignupForm()
+    #if form.validate_on_submit():
+    if request.method == 'POST':                            # Accept form submission.
         email = request.form['email']                       # User supplied email.
         username = request.form['username']                 # User supplied email.
         password = request.form['password']                 # User supplied password.
-
-        """
-        if User.query.filter(User.email == email).first():  # Check if email already has an account.
-            flash('This email has already been registered with an account.')
-            return redirect(url_for('sign_up'))
-
-        if User.query.filter(User.email == email).first():  # Check if username already has an account.
-            flash('This username has already been registered with an account.')
-            return redirect(url_for('sign_up'))
-        """
 
         token = ts.dumps(
                 email,
@@ -71,6 +63,7 @@ def sign_up():
         new_user.save()
         flash('Please confirm your email (check the spam folder) to log in.')
         return redirect(url_for('log_in'))
+    """
     if form.email.errors:
         [flash('Email error: ' + e) for e in form.email.errors]
     if form.username.errors:
@@ -78,6 +71,7 @@ def sign_up():
     if form.password.errors:
         [flash('Password error: ' + e) for e in form.password.errors]
     return render_template('signup_form.html', form=form)
+    """
 
 @app.route('/confirm/<token>')
 def confirm_email(token):
@@ -99,6 +93,13 @@ def confirm_email(token):
     return redirect(url_for('log_in'))
 
 @app.route('/')
+def send_react_components():
+    return json.dumps({'logged_in': True})
+    if 'username' in session:
+        return redirect(url_for('profile', username=session['username']))
+    #return redirect(url_for('log_in'))
+    #return open('static/javascript/test_browser_react_components.js').read().strip()
+
 @app.route('/login/', methods=['GET', 'POST'])
 def log_in():
     """
@@ -109,11 +110,7 @@ def log_in():
     """
 
     error = None
-    if request.path == '/':
-        if 'username' in session:                           # Check if the user has an
-            return redirect(url_for('profile', username=session['username']))
-        return redirect(url_for('log_in'))
-    elif request.method == 'POST':                          # Accept form submission.
+    if request.method == 'POST':                          # Accept form submission.
         login = request.form['login']
         password = request.form['password']
 
@@ -149,13 +146,11 @@ def account_recovery():
     """
 
     if request.method == 'POST':
-        username = request.form['username']
-        email = username if '@' in username else None
+        login = request.form['login']
 
-        if email:
-            user = User.query.filter(User.email == email).first()
-        else:
-            user = User.query.filter(User.username == username).first()
+        user = User.query.filter(User.email == login).first()
+        if not user:
+            user = User.query.filter(User.username == login).first()
 
         if user:
             token = ts.dumps(
