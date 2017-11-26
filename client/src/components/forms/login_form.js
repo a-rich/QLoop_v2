@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Form, Col, FormControl, ControlLabel, FormGroup, Button, HelpBlock } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
+import PropTypes from 'prop-types';
 
-import { validateEmail } from '../utils/misc';
+import { validateEmail } from '../../utils/misc';
 
 class LoginForm extends Component {
     constructor(props){
@@ -43,6 +44,21 @@ class LoginForm extends Component {
 
     onSubmit(event) {
         event.preventDefault();
+
+        this.setState({
+            touched: {
+                ...this.state.touched,
+                email: true,
+                password: true
+            }
+        });
+
+        const errors = this.validate(this.state.data);
+        this.setState({ errors: errors });
+
+        if(Object.keys(errors).length !== 0) {
+            return;
+        }
 
         if(Object.keys(this.state.errors).length === 0) {
             this.props.submit(this.state.data);
@@ -120,6 +136,10 @@ class LoginForm extends Component {
             </div>
         );
     }
+}
+
+LoginForm.propTypes = {
+    submit: PropTypes.func.isRequired
 }
 
 export default LoginForm;
