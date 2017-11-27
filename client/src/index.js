@@ -2,25 +2,33 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
 import { BrowserRouter } from 'react-router-dom';
+import thunk from 'redux-thunk';
 import promise from 'redux-promise';
 
 import reducers from './reducers';
 import App from './App';
-//import SignupForm from './containers/signup_form';
-//import LoginForm from './components/login_form';
-//import NavbarComponent from './components/navbar_component'
+import { userLoggedIn } from './actions/auth';
 
 import registerServiceWorker from './registerServiceWorker';
 
-const createStoreWithMiddleware = applyMiddleware(promise)(createStore);
+const store = createStore(
+    reducers,
+    composeWithDevTools(applyMiddleware(promise, thunk))
+);
 
+if(localStorage.QLoopJWT) {
+    const user = { token: localStorage.QLoopJWT };
+    store.dispatch(userLoggedIn(user));
+}
 
 ReactDOM.render(
-    <Provider store={createStoreWithMiddleware(reducers)}>
-        <BrowserRouter>
+
+    <BrowserRouter>
+        <Provider store={store}>
             <App />
-        </BrowserRouter>
-    </Provider>
+        </Provider>
+    </BrowserRouter>
   , document.getElementById('root'));
 registerServiceWorker();

@@ -1,19 +1,29 @@
 import React, { Component } from 'react';
+//import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import LoginForm from '../forms/login_form';
+import { login } from '../../actions/auth';
 
 class LoginPage extends Component {
     submit(data) {
-        console.log(data);
+        this.props.login(data, () => {
+            this.props.history.push('/')
+        });
     }
 
     render() {
         return(
             <div>
-                <LoginForm submit={this.submit} />
+                <LoginForm submit={this.submit.bind(this)} />
             </div>
         );
     }
 }
 
-export default LoginPage;
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators({ login }, dispatch);
+}
+
+export default connect(null, mapDispatchToProps)(LoginPage);

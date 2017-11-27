@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-export const CREATE_USER = 'create_user';
+import { CREATE_USER } from '../types';
+import { ROOT_URL } from '../types';
 
-const ROOT_URL = 'http://localhost:3000';
 
 export function createUser(values) {
     const request = axios.post(`${ROOT_URL}/users/register`, values);
