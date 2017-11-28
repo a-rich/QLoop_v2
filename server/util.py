@@ -19,3 +19,8 @@ def send_email(user_email, subject, html):
         server.sendmail('qloop.signup@gmail.com', user_email, msg.as_string())
     finally:
         server.quit()
+
+
+def allowed_file(filename):
+    allowed_extensions = set(['png', 'jpg', 'jpeg', 'gif'])
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions

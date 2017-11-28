@@ -1,9 +1,11 @@
 import json
+from bson import Binary
 from __main__ import app
-from flask import request, session, redirect, url_for, render_template, flash
+from flask import request, session, redirect, url_for, render_template, flash, send_from_directory
 from models import db, User, Song
-from util import send_email
+from util import send_email, allowed_file
 from itsdangerous import URLSafeTimedSerializer
+from werkzeug import secure_filename
 
 ts = URLSafeTimedSerializer(app.config['SECRET_KEY'])  # Tokenize acct. mgmt. emails
 
@@ -48,7 +50,7 @@ def create_account():
         except:
             errors['confirmation_email'] = 'Failed to send confirmation email...please try again.'
 
-    return json.dumps({'errors': errors, 'data': {}})
+    return json.dumps({'errors': errors})
 
 
 @app.route('/api/users/confirm_account_creation/<token>/', methods=['GET'])
@@ -69,12 +71,15 @@ def confirm_account_creation(token):
         User.objects.get(email=user['email'])
         errors = {'user': 'User already exists.'}
     except:
-        errors = User.add(user['email'], user['username'], user['password'])
+        User(
+            email=user['email'],
+            username=user['username'],
+            password=user['password']).save()
 
     return redirect('http://www.google.com')
 
 
-@app.route('/api/users/recover_account/', methods=['POST'])
+@app.route('/api/users/reset_password/', methods=['POST'])
 def recover_account():
     """
         Send recovery email to user so they may reset their password.
@@ -101,9 +106,9 @@ def recover_account():
         try:
             send_email(email, subject, html)
         except:
-            errors['recovery_email'] = 'Failed to send account recovery email...please try again.'
+            errors['recovery'] = 'Failed to send account recovery email...please try again.'
 
-    return json.dumps({'errors': errors, 'data': {}})
+    return json.dumps({'errors': errors})
 
 
 @app.route('/api/users/reset_password/<token>/', methods=['GET', 'POST'])
@@ -116,15 +121,14 @@ def confirm_account_recovery(token):
         deserialize the accompanying token, find the user in the User model,
         and then update their document to reflect the new password.
 
-        TODO: * redirect to React component WITH token for password reset
+        TODO: redirect to React component WITH token for password reset
     """
 
     if request.method == 'GET':
         return redirect('http://www.google.com')
 
     errors = {}
-    old_password = request.form['old_password']
-    new_password = request.form['new_password']
+    password = request.form['password']
 
     try:
         email = ts.loads(token, salt='account-recovery-key', max_age=21600)
@@ -132,21 +136,20 @@ def confirm_account_recovery(token):
         abort(404)
 
     try:
-        user = User.objects.get(email=email, password=old_password)
-        user.update(password=new_password)
+        user = User.objects.get(email=email)
+        user.update(password=password)
     except:
         errors['password_reset'] = 'Invalid credentials...please try again.'
 
-    return json.dumps({'errors': errors, 'data': {}})
+    return json.dumps({'errors': errors})
 
 
-@app.route('/api/users/', methods=['POST'])
+@app.route('/api/user/', methods=['POST'])
 def fetch_profile():
     """
         Fetch user info: pic, email, friends, and favorite songs.
 
-        TODO: * figure out why ImageField isn't JSON serializable
-              * return data about friend's online/creator status
+        TODO: return data about friend's online/creator status
     """
 
     errors = {}
@@ -160,6 +163,7 @@ def fetch_profile():
             'favorite_songs': user.favorite_songs_list,
             'friends': user.friends_list
         }
+        session['user'] = user.to_json()
     except:
         errors['login'] = 'Invalid credentials...please try again.'
         data = {}
@@ -167,30 +171,88 @@ def fetch_profile():
     return json.dumps({'errors': errors, 'data': data})
 
 
-@app.route('/api/edit_profile/', methods=['PUT'])
+@app.route('/api/user/edit_profile/', methods=['PUT'])
 def edit_profile():
     """
         Update user's email and/or profile image.
+
+        TODO: figure out how to force client browser to refresh user in session
     """
 
-    pass
+    errors = {}
+    user = User.from_json(session['user'])
 
-@app.route('/api/add_friend/<fid>/', methods=['PUT'])
+    if request.files:
+        img = request.files[''] if request.files[''] else request.files['files']
+        path = app.config['UPLOAD_FOLDER'] + user.username + "-" + secure_filename(img.filename)
+        img.save(path)
+        user.update(profile_pic=path)
+
+        # TODO: Remove old image file
+
+    if request.form:
+        try:
+            old_password = request.form['old_password']
+            new_password = request.form['new_password']
+        except:
+            errors['password'] = 'Must supply both old and new passwords.'
+            return json.dumps({'errors': errors})
+
+        if user.password == old_password:
+            user.update(password=new_password)
+
+    session['user'] = user.to_json()
+    return json.dumps({'errors': {}})
+
+
+@app.route('/api/static/<path:filename>', methods=['GET'])
+def get_image(filename):
+    """
+        Serves user profile images to front end.
+    """
+
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
+@app.route('/api/user/add_friend/', methods=['POST'])
 def add_friend():
     """
         Add user FID to user's friends.
     """
 
-    pass
+    errors = {}
+    friend_email = request.form['email']
+    friend = User.objects.get(email=friend_email)
 
+    if not friend:
+        errors['add_friend'] = 'There is no user with that email.'
+        return json.dumps({'errors': errors})
 
-@app.route('/api/remove_friend/<fid>/', methods=['DELETE'])
+    user = User.from_json(session['user'])
+    if friend.id not in [User.from_json(f).id for f in user.friends_list]:
+        user.update(push__friends_list=friend.to_json())
+
+    return json.dumps({'errors': errors})
+
+@app.route('/api/user/remove_friend/', methods=['POST'])
 def remove_friend():
     """
         Remove user FID from user's friends.
     """
 
-    pass
+    errors = {}
+    friend_email = request.form['email']
+    friend = User.objects.get(email=friend_email)
+
+    if not friend:
+        errors['remove_friend'] = 'There is no user with that email.'
+        return json.dumps({'errors': errors})
+
+    user = User.from_json(session['user'])
+    if friend.id in [User.from_json(f).id for f in user.friends_list]:
+        user.update(pull__friends_list=friend.to_json())
+
+    return json.dumps({'errors': errors})
 
 
 @app.route('/api/remove_song/<sid>/', methods=['DELETE'])
