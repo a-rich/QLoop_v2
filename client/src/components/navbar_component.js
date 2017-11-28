@@ -36,15 +36,19 @@ class NavbarComponent extends Component {
                             </NavDropdown>
                         </Nav>
 
-                        <Nav pullRight>
-                            {isAuthenticated ?
+                        {isAuthenticated ?
+                            <Nav pullRight>
                                 <NavItem onClick={this.onLogout.bind(this)} eventKey={3}>SignOut</NavItem>
-                                :
+                            </Nav> :
+                            <Nav pullRight>
                                 <LinkContainer to="/login">
-                                    <NavItem eventKey={3}>SignIn</NavItem>
+                                    <NavItem eventKey={3}>Sign In</NavItem>
                                 </LinkContainer>
-                            }
-                        </Nav>
+                                <LinkContainer to="/signup">
+                                    <NavItem eventKey={4}>Sign Up</NavItem>
+                                </LinkContainer>
+                            </Nav>
+                        }
                     </Navbar.Collapse>
                 </Navbar>
             </div>
