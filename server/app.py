@@ -6,7 +6,10 @@ app.config['MONGOALCHEMY_DATABASE'] = 'database'       # Configure database name
 
 from views import *
 
-db.init_app(app)                                       # Initialize MongoAlchemy.
+try:
+    db.init_app(app)                                       # Initialize MongoAlchemy.
+except:
+    pass
 
 if __name__ == '__main__':
     app.run(debug=True, threaded=True)
