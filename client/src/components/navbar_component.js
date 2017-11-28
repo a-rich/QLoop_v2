@@ -21,10 +21,11 @@ class NavbarComponent extends Component {
                         <Navbar.Brand>
                             <Link to="/">QLoop</Link>
                         </Navbar.Brand>
+                        <Navbar.Toggle />
                     </Navbar.Header>
                     <Navbar.Collapse>
                         <Nav>
-                            <IndexLinkContainer to="/signup">
+                            <IndexLinkContainer to="/myQLoop">
                                 <NavItem eventKey={1}>My QLoop</NavItem>
                             </IndexLinkContainer>
 
@@ -57,4 +58,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps, { logout })(NavbarComponent);
+export default connect(mapStateToProps, { logout }, null, { pure: false })(NavbarComponent);

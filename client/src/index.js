@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
 import thunk from 'redux-thunk';
 import promise from 'redux-promise';
 
@@ -27,7 +27,7 @@ ReactDOM.render(
 
     <BrowserRouter>
         <Provider store={store}>
-            <App />
+            <Route component={App} />
         </Provider>
     </BrowserRouter>
   , document.getElementById('root'));
