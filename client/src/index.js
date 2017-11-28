@@ -2,29 +2,33 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import { BrowserRouter, Route } from 'react-router-dom';
+import thunk from 'redux-thunk';
 import promise from 'redux-promise';
 
-import './index.css';
 import reducers from './reducers';
-import SignupForm from './containers/signup_form';
-import NavbarComponent from './components/navbar_component'
+import App from './App';
+import { userLoggedIn } from './actions/auth';
 
 import registerServiceWorker from './registerServiceWorker';
 
-const createStoreWithMiddleware = applyMiddleware(promise)(createStore);
+const store = createStore(
+    reducers,
+    composeWithDevTools(applyMiddleware(promise, thunk))
+);
 
+if(localStorage.QLoopJWT) {
+    const user = { token: localStorage.QLoopJWT };
+    store.dispatch(userLoggedIn(user));
+}
 
 ReactDOM.render(
-    <Provider store={createStoreWithMiddleware(reducers)}>
-        <BrowserRouter>
-            <div>
-                <NavbarComponent />
-                <Switch>
-                    <Route to="/" component={SignupForm} />
-                </Switch>
-            </div>
-        </BrowserRouter>
-    </Provider>
+
+    <BrowserRouter>
+        <Provider store={store}>
+            <Route component={App} />
+        </Provider>
+    </BrowserRouter>
   , document.getElementById('root'));
 registerServiceWorker();

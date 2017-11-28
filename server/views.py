@@ -1,234 +1,297 @@
+import json
+from bson import Binary
 from __main__ import app
-from flask import request, session, redirect, url_for, render_template, flash
-from models import db, User
-from forms import SignupForm
-from functools import wraps
-from util import send_email
+from flask import request, session, redirect, url_for, render_template, flash, send_from_directory
+from models import db, User, Song
+from util import send_email, allowed_file
 from itsdangerous import URLSafeTimedSerializer
+from werkzeug import secure_filename
 
-ts = URLSafeTimedSerializer(app.config['SECRET_KEY'])  # Used to create confirmation email.
+ts = URLSafeTimedSerializer(app.config['SECRET_KEY'])  # Tokenize acct. mgmt. emails
 
-def login_required(page):
+
+"""
+   ***************************************************************
+    Creating, recovering, fetching, and updating a user's profile
+   ***************************************************************
+"""
+
+@app.route('/api/users/new/', methods=['POST'])
+def create_account():
     """
-        Decorator that enforces that the user be logged in before executing the
-        decorated function.
+        Tokenize user's email, username, and password and then send an email
+        confirmation link.
+
+        TODO: use Celery to make `send_email` asynchronous
     """
 
-    @wraps(page)
-    def wrap(*args, **kwargs):
-        if 'logged_in' in session:
-            return page(*args, **kwargs)
-        else:
-            flash('You must log in first.')
-            return redirect(url_for('log_in'))
-    return wrap
+    email = request.get_json()['email']
+    username = request.get_json()['username']
+    password = request.get_json()['password']
 
-@app.route('/signup/', methods=['GET', 'POST'])
-def sign_up():
-    """
-        Accepts username,  email and password, tokenizes the email, sends an
-        account activation email to the user, then enters the user into the
-        database with the field EMAIL_CONFIRMED set to FALSE.
-    """
-    form = SignupForm()
-    if form.validate_on_submit():
-        email = request.form['email']                       # User supplied email.
-        username = request.form['username']                 # User supplied email.
-        password = request.form['password']                 # User supplied password.
+    errors = User.check_for_existing_user(email, username)
 
-        """
-        if User.query.filter(User.email == email).first():  # Check if email already has an account.
-            flash('This email has already been registered with an account.')
-            return redirect(url_for('sign_up'))
-
-        if User.query.filter(User.email == email).first():  # Check if username already has an account.
-            flash('This username has already been registered with an account.')
-            return redirect(url_for('sign_up'))
-        """
-
+    if not errors:
         token = ts.dumps(
-                email,
-                salt='email-confirm-key')                   # Token for confirmation email.
-
-        confirm_url = url_for(                              # Generates url embedded in
-                'confirm_email',                            # confirmation email.
+                {'email':email,
+                 'username': username,
+                 'password': password},
+                salt='account-creation-key')
+        email_url = url_for(
+                'confirm_account_creation',
                 token=token,
-                _external = True)
-
-        subject = 'Confirm your email'                      # Email subject.
-        html = render_template(                             # Email body.
+                _external=True)
+        subject = 'Confirm your new QLoop account'
+        html = render_template(
                 'account_activation.html',
-                confirm_url=confirm_url)
+                email_url=email_url)
+        try:
+            send_email(email, subject, html)
+        except:
+            errors['confirmation_email'] = 'Failed to send confirmation email...please try again.'
 
-        send_email(email, subject, html)                    # Calls send_email function in utils.py.
+    return json.dumps({'errors': errors})
 
 
-        new_user = User(                                    # Creates partial DB entry for new user.
-                email=email,
-                username=username,
-                password=password,
-                email_confirmed=False)
-        new_user.save()
-        flash('Please confirm your email (check the spam folder) to log in.')
-        return redirect(url_for('log_in'))
-    if form.email.errors:
-        [flash('Email error: ' + e) for e in form.email.errors]
-    if form.username.errors:
-        [flash('Username error: ' + e) for e in form.username.errors]
-    if form.password.errors:
-        [flash('Password error: ' + e) for e in form.password.errors]
-    return render_template('signup_form.html', form=form)
-
-@app.route('/confirm/<token>')
-def confirm_email(token):
+@app.route('/api/users/confirm_account_creation/<token>/', methods=['GET'])
+def confirm_account_creation(token):
     """
-        View for handling the user clicking on their account activation link.
-        Loads the token from the confirmation url and then completes the user's
-        entry in the DB by updating EMAIL_CONFIRMED to TRUE.
+        Upon email confirmation, add new user to the User collection.
+
+        TODO: * redirect to React component for login
+              * if errors, log errors
     """
 
     try:
-        email = ts.loads(token, salt='email-confirm-key', max_age=21600)
+        user = ts.loads(token, salt='account-creation-key', max_age=21600)
     except:
         abort(404)
 
-    user = User.query.filter(User.email == email).first()
-    user.email_confirmed = True
-    user.save()
+    try:
+        User.objects.get(email=user['email'])
+        errors = {'user': 'User already exists.'}
+    except:
+        User(
+            email=user['email'],
+            username=user['username'],
+            password=user['password']).save()
 
-    return redirect(url_for('log_in'))
+    return redirect('http://www.google.com')
 
-@app.route('/')
-@app.route('/login/', methods=['GET', 'POST'])
-def log_in():
+
+@app.route('/api/users/reset_password/', methods=['POST'])
+def recover_account():
     """
-        Home/login view. Checks if the user has an active session cookie and
-        logs them in if so. Otherwise renders the login template. Upon
-        submitting the login form, checks to see if the user is validated,
-        creates a session for them, then redirects them to their profile page.
-    """
-
-    error = None
-    if request.path == '/':
-        if 'username' in session:                           # Check if the user has an
-            return redirect(url_for('profile', username=session['username']))
-        return redirect(url_for('log_in'))
-    elif request.method == 'POST':                          # Accept form submission.
-        login = request.form['login']
-        password = request.form['password']
-
-        user = User.query.filter(User.email == login).first()
-        if not user:
-            user = User.query.filter(User.username == login).first()
-
-        if (login == 'admin' and password == 'admin') \
-                or (user and user.email_confirmed and password == user.password):
-            session['username'] = user.username
-            session['logged_in'] = True
-            flash('Logged in as {}.'.format(user.username))
-            return redirect(url_for('profile', username=session['username']))
-        else:
-            error = 'Invalid credentials. Please try again.'
-    return render_template('login_form.html', error=error)
-
-@app.route('/logout/')
-@login_required
-def logout():
-    """
-        Removes user session.
+        Send recovery email to user so they may reset their password.
     """
 
-    session.pop('logged_in', None)
-    session.pop('username', None)
-    return redirect(url_for('log_in'))
+    errors = {}
+    email = request.get_json()['email']
+    resp = User.check_for_existing_user(email, None)
 
-@app.route('/account_recovery/', methods=['GET', 'POST'])
-def account_recovery():
-    """
-        Allows user to update their password after confirming an email.
-    """
-
-    if request.method == 'POST':
-        username = request.form['username']
-        email = username if '@' in username else None
-
-        if email:
-            user = User.query.filter(User.email == email).first()
-        else:
-            user = User.query.filter(User.username == username).first()
-
-        if user:
-            token = ts.dumps(
-                    user.email,
-                    salt='account-recovery-key')                # Token for password reset email.
-
-            reset_url = url_for(                                # Generates url embedded in
-                    'reset_password',                           # password reset email.
-                    token=token,
-                    _external = True)
-
-            subject = 'Reset password'                          # Email subject.
-            html = render_template(                             # Email body.
-                    'account_recovery.html',
-                    reset_url=reset_url)
-
-            send_email(user.email, subject, html)               # Calls send_email function in utils.py.
-
-            flash('Please click the password reset link that was sent to your email (check the spam folder) to reset your password.')
-            return redirect(url_for('log_in'))
-        else:
-            flash('Invalid email or username.')
-
-    return render_template('account_recovery_form.html')
-
-@app.route('/reset_password/<token>', methods=['GET', 'POST'])
-def reset_password(token):
-    """
-        View for handling the user clicking on their account password reset link.
-        Loads the token from the reset url and then updates the user's
-        entry in the DB by updating PASSWORD.
-    """
-
-    if request.method == 'POST':
+    if not resp['email']:
+       errors['email'] = 'No account has been created using that email.'
+    else:
+        token = ts.dumps(
+                email,
+                salt='account-recovery-key')
+        recovery_url = url_for(
+                'confirm_account_recovery',
+                token=token,
+                _external=True)
+        subject = 'Reset your QLoop account password'
+        html = render_template(
+                'account_recovery.html',
+                recovery_url=recovery_url)
         try:
-            username = ts.loads(token, salt='account-recovery-key', max_age=21600)
-            email = username if '@' in username else None
+            send_email(email, subject, html)
         except:
-            abort(404)
+            errors['recovery'] = 'Failed to send account recovery email...please try again.'
 
-        if email:
-            user = User.query.filter(User.email == email).first()
-        else:
-            user = User.query.filter(User.username == email).first()
+    return json.dumps({'errors': errors})
 
-        user.password = request.form['password']
-        user.save()
 
-        return redirect(url_for('log_in'))
-    return render_template('password_reset.html')
-
-@app.route('/profile/')
-@app.route('/profile/<username>')
-@login_required
-def profile(username):
+@app.route('/api/users/reset_password/<token>/', methods=['GET', 'POST'])
+def confirm_account_recovery(token):
     """
-        Renders profile view.
+        Upon account recovery confirmation, redirect to the React component
+        that sends a POST with an updated password.
+
+        When React component for password reset POSTs the new password,
+        deserialize the accompanying token, find the user in the User model,
+        and then update their document to reflect the new password.
+
+        TODO: redirect to React component WITH token for password reset
     """
 
-    return render_template('profile.html', username=username)
+    if request.method == 'GET':
+        return redirect('http://www.google.com')
 
-@app.route('/create_booth/')
-@login_required
+    errors = {}
+    password = request.get_json()['password']
+
+    try:
+        email = ts.loads(token, salt='account-recovery-key', max_age=21600)
+    except:
+        abort(404)
+
+    try:
+        user = User.objects.get(email=email)
+        user.update(password=password)
+    except:
+        errors['password_reset'] = 'Invalid credentials...please try again.'
+
+    return json.dumps({'errors': errors})
+
+
+@app.route('/api/user/', methods=['POST'])
+def fetch_profile():
+    """
+        Fetch user info: pic, email, friends, and favorite songs.
+
+        TODO: return data about friend's online/creator status
+    """
+
+    errors = {}
+
+    try:
+        user = User.objects.get(
+                email=request.get_json()['email'],
+                password=request.get_json()['password'])
+        data = {
+            'email': user.email,
+            'favorite_songs': user.favorite_songs_list,
+            'friends': user.friends_list
+        }
+        session['user'] = user.to_json()
+    except:
+        errors['login'] = 'Invalid credentials...please try again.'
+        data = {}
+
+    return json.dumps({'errors': errors, 'data': data, 'token': "ToBeReplacedWithActualJWT"})
+
+
+@app.route('/api/user/edit_profile/', methods=['PUT'])
+def edit_profile():
+    """
+        Update user's email and/or profile image.
+
+        TODO: figure out how to force client browser to refresh user in session
+    """
+
+    errors = {}
+    user = User.from_json(session['user'])
+
+    if request.files:
+        img = request.files[''] if request.files[''] else request.files['files']
+        path = app.config['UPLOAD_FOLDER'] + user.username + "-" + secure_filename(img.filename)
+        img.save(path)
+        user.update(profile_pic=path)
+
+        # TODO: Remove old image file
+
+    if request.get_json():
+        try:
+            old_password = request.get_json()['old_password']
+            new_password = request.get_json()['new_password']
+        except:
+            errors['password'] = 'Must supply both old and new passwords.'
+            return json.dumps({'errors': errors})
+
+        if user.password == old_password:
+            user.update(password=new_password)
+
+    session['user'] = user.to_json()
+    return json.dumps({'errors': {}})
+
+
+@app.route('/api/static/<path:filename>', methods=['GET'])
+def get_image(filename):
+    """
+        Serves user profile images to front end.
+    """
+
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
+@app.route('/api/user/add_friend/', methods=['POST'])
+def add_friend():
+    """
+        Add user FID to user's friends.
+    """
+
+    errors = {}
+    friend_email = request.get_json()['email']
+    friend = User.objects.get(email=friend_email)
+
+    if not friend:
+        errors['add_friend'] = 'There is no user with that email.'
+        return json.dumps({'errors': errors})
+
+    user = User.from_json(session['user'])
+    if friend.id not in [User.from_json(f).id for f in user.friends_list]:
+        user.update(push__friends_list=friend.to_json())
+
+    return json.dumps({'errors': errors})
+
+@app.route('/api/user/remove_friend/', methods=['POST'])
+def remove_friend():
+    """
+        Remove user FID from user's friends.
+    """
+
+    errors = {}
+    friend_email = request.get_json()['email']
+    friend = User.objects.get(email=friend_email)
+
+    if not friend:
+        errors['remove_friend'] = 'There is no user with that email.'
+        return json.dumps({'errors': errors})
+
+    user = User.from_json(session['user'])
+    if friend.id in [User.from_json(f).id for f in user.friends_list]:
+        user.update(pull__friends_list=friend.to_json())
+
+    return json.dumps({'errors': errors})
+
+
+@app.route('/api/remove_song/<sid>/', methods=['DELETE'])
+def remove_song():
+    """
+        Remove song SID from user's favorite songs.
+    """
+
+    pass
+
+
+"""
+   ***************************************
+    Creating, finding, and joining booths
+   ***************************************
+"""
+
+@app.route('/api/create_booth/', methods=['POST'])
 def create_booth():
     """
-        Renders booth creation view.
+        Create a new booth.
     """
-    return render_template('create_booth.html', username=session['username'])
 
-@app.route('/public_booths/')
-@login_required
-def public_booths():
+    pass
+
+
+@app.route('/api/booths/', methods=['GET'])
+def fetch_public_booths():
     """
-        Renders public booths view.
+        Fetch all the public and password protected booths.
     """
-    return render_template('public_booths.html', username=session['username'])
+
+    pass
+
+
+@app.route('/api/booths/<bid>/', methods=['GET'])
+def join_booth():
+    """
+        Join booth BID.
+    """
+
+    pass

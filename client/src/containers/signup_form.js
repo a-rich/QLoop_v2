@@ -39,14 +39,8 @@ class SignupForm extends Component {
             <div>
                 <form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
                     <Field
-                        label="FirstName"
-                        name="firstName"
-                        type="text"
-                        component={this.renderField}
-                    />
-                    <Field
-                        label="LastName"
-                        name="lastName"
+                        label="Username"
+                        name="username"
                         type="text"
                         component={this.renderField}
                     />
@@ -83,11 +77,8 @@ class SignupForm extends Component {
 function validate(values) {
     const errors={};
 
-    if(!values.firstName) {
-        errors.firstName = "Please Enter Your First Name";
-    }
-    if(!values.lastName) {
-        errors.lastName = "Please Enter Your Last Name";
+    if(!values.username) {
+        errors.user = "Please Enter a Username";
     }
     if (!values.email) {
         errors.email = "Please Enter Your Email";

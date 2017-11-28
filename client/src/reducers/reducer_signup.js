@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { CREATE_USER } from '../actions/index';
+import { CREATE_USER } from '../types';
 
 export default function(state = {}, action) {
     switch (action.type) {
