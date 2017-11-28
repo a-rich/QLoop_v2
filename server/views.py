@@ -168,7 +168,7 @@ def fetch_profile():
         errors['login'] = 'Invalid credentials...please try again.'
         data = {}
 
-    return json.dumps({'errors': errors, 'data': data})
+    return json.dumps({'errors': errors, 'data': data, 'token': "ToBeReplacedWithActualJWT"})
 
 
 @app.route('/api/user/edit_profile/', methods=['PUT'])
