@@ -25,9 +25,9 @@ def create_account():
         TODO: use Celery to make `send_email` asynchronous
     """
 
-    email = request.form['email']
-    username = request.form['username']
-    password = request.form['password']
+    email = request.get_json()['email']
+    username = request.get_json()['username']
+    password = request.get_json()['password']
 
     errors = User.check_for_existing_user(email, username)
 
@@ -86,7 +86,7 @@ def recover_account():
     """
 
     errors = {}
-    email = request.form['email']
+    email = request.get_json()['email']
     resp = User.check_for_existing_user(email, None)
 
     if not resp['email']:
@@ -128,7 +128,7 @@ def confirm_account_recovery(token):
         return redirect('http://www.google.com')
 
     errors = {}
-    password = request.form['password']
+    password = request.get_json()['password']
 
     try:
         email = ts.loads(token, salt='account-recovery-key', max_age=21600)
@@ -156,8 +156,8 @@ def fetch_profile():
 
     try:
         user = User.objects.get(
-                email=request.form['email'],
-                password=request.form['password'])
+                email=request.get_json()['email'],
+                password=request.get_json()['password'])
         data = {
             'email': user.email,
             'favorite_songs': user.favorite_songs_list,
@@ -190,10 +190,10 @@ def edit_profile():
 
         # TODO: Remove old image file
 
-    if request.form:
+    if request.get_json():
         try:
-            old_password = request.form['old_password']
-            new_password = request.form['new_password']
+            old_password = request.get_json()['old_password']
+            new_password = request.get_json()['new_password']
         except:
             errors['password'] = 'Must supply both old and new passwords.'
             return json.dumps({'errors': errors})
@@ -221,7 +221,7 @@ def add_friend():
     """
 
     errors = {}
-    friend_email = request.form['email']
+    friend_email = request.get_json()['email']
     friend = User.objects.get(email=friend_email)
 
     if not friend:
@@ -241,7 +241,7 @@ def remove_friend():
     """
 
     errors = {}
-    friend_email = request.form['email']
+    friend_email = request.get_json()['email']
     friend = User.objects.get(email=friend_email)
 
     if not friend:
