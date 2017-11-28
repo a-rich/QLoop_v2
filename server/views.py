@@ -123,7 +123,8 @@ def confirm_account_recovery(token):
         return redirect('http://www.google.com')
 
     errors = {}
-    password = request.form['password']
+    old_password = request.form['old_password']
+    new_password = request.form['new_password']
 
     try:
         email = ts.loads(token, salt='account-recovery-key', max_age=21600)
@@ -131,10 +132,10 @@ def confirm_account_recovery(token):
         abort(404)
 
     try:
-        user = User.objects.get(email=email)
-        user.update(password=password)
+        user = User.objects.get(email=email, password=old_password)
+        user.update(password=new_password)
     except:
-        errors['password_reset'] = 'Failed to reset password...please try again.'
+        errors['password_reset'] = 'Invalid credentials...please try again.'
 
     return json.dumps({'errors': errors, 'data': {}})
 
