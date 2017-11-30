@@ -6,6 +6,7 @@ import SignupForm from './containers/signup_form';
 import LoginPage from './components/pages/login_page';
 import NavbarComponent from './components/navbar_component';
 import DashboardPage from './components/pages/dashboard_page';
+import ResetPasswordPage from './components/pages/reset_password_page';
 import UserRoute from './components/routes/user_routes';
 import GuestRoute from './components/routes/guest_routes';
 
@@ -16,6 +17,7 @@ const App = ({ location }) => (
             <Route path="/" exact component={LoginPage} />
             <GuestRoute location={location} path="/signup" exact component={SignupForm} />
             <GuestRoute location={location} path="/login" exact component={LoginPage} />
+            <GuestRoute location={location} path="/reset_password/:token" exact component={ResetPasswordPage} />
             <UserRoute location={location} path="/myQLoop" exact component={DashboardPage} />
         </div>
     </div>

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { USER_LOGGED_IN, USER_LOGGED_OUT, ROOT_URL } from '../types';
+import { USER_LOGGED_IN, USER_LOGGED_OUT, ROOT_URL, RESET_PASSWORD } from '../types';
 
 export const userLoggedIn = data => ({
     type: USER_LOGGED_IN,
@@ -28,5 +28,14 @@ export function logout() {
     return (dispatch) => {
         localStorage.removeItem("QLoopJWT");
         dispatch(userLoggedOut());
+    }
+}
+
+export function resetPassword(token, values) {
+    const request = axios.post(`${ROOT_URL}/api/users/reset_password/${token}/`, values);
+
+    return {
+        type: RESET_PASSWORD,
+        payload: request
     }
 }

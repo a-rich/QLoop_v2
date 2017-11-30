@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { Form, Col, FormControl, ControlLabel, FormGroup, Button, HelpBlock } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import { validateEmail } from '../../utils/misc';
+import ForgotPasswordOverlay from '../overlays/forgot_password_overlay';
 
 class LoginForm extends Component {
     constructor(props){
@@ -126,7 +127,7 @@ class LoginForm extends Component {
                     </FormGroup>
 
                     <FormGroup>
-                        <Col smOffset={2} sm={4}>
+                        <Col smOffset={2} sm={1}>
                             <Button type="submit">
                                 Sign in
                             </Button>
