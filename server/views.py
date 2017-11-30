@@ -89,16 +89,13 @@ def recover_account():
     email = request.get_json()['email']
     resp = User.check_for_existing_user(email, None)
 
-    if not resp['email']:
+    if not resp:
        errors['email'] = 'No account has been created using that email.'
     else:
         token = ts.dumps(
                 email,
                 salt='account-recovery-key')
-        recovery_url = url_for(
-                'confirm_account_recovery',
-                token=token,
-                _external=True)
+        recovery_url = "http://localhost:3000/reset_password/" + token
         subject = 'Reset your QLoop account password'
         html = render_template(
                 'account_recovery.html',
@@ -124,8 +121,8 @@ def confirm_account_recovery(token):
         TODO: redirect to React component WITH token for password reset
     """
 
-    if request.method == 'GET':
-        return redirect('http://www.google.com')
+    """if request.method == 'GET':
+        return redirect('https://www.google.com')"""
 
     errors = {}
     password = request.get_json()['password']
