@@ -26,7 +26,8 @@ class BoothRegistry():
             Adds a new user to the given booth object's DJs dictionary.
         """
         # TODO: if authorized...
-        booth.djs[dj.username] = {'booth_enqueue_count': booth.find_min(), 'queue': list()}
+
+        booth.add_dj(dj)
 
 class Booth():
     """
@@ -53,7 +54,7 @@ class Booth():
         """
 
         if dj.username not in self.djs:
-            self.djs[dj.username] = {'booth_enqueue_count': 0, 'queue': list()}
+            self.djs[dj.username] = {'booth_enqueue_count': self.find_min(), 'queue': list()}
             self.dj_order.append(dj.username)
         else:
             return "User is already in this booth's DJ pool."
@@ -74,11 +75,18 @@ class Booth():
             Add a song to the user's personal queue...if this user is being
             waited on, resume dequeueing other users' personal queues.
         """
-        # TODO: check if this user is the current user and find the next user
 
         dj = self.djs[dj.username]
         dj['queue'].append(song)
         dj['booth_enqueue_count'] += 1
+
+        if self.dj_order[self.current_dj % len(self.djs)] == dj.username:
+            next_dj = self.djs[self.dj_order[self.current_dj % len(self.djs)]]
+            while len(next_dj['queue']) > 0:
+                self.booth_enqueue(next_dj['queue'].pop(0))
+                self.current_dj += 1
+                next_dj = self.djs[self.dj_order[self.current_dj % len(self.djs)]]
+
 
     def dj_dequeue(self, dj):
         """
@@ -88,7 +96,7 @@ class Booth():
 
         return self.djs[dj.username]['queue'].pop(0)
 
-    def booth_enqueue(self):
+    def booth_enqueue(self, song):
         """
             Put a user's choosen song into the booth's queue.
         """
