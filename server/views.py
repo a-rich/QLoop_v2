@@ -157,6 +157,7 @@ def fetch_profile():
                 password=request.get_json()['password'])
         data = {
             'email': user.email,
+            'username': user.username,
             'favorite_songs': user.favorite_songs_list,
             'friends': user.friends_list
         }

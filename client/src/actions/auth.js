@@ -18,6 +18,7 @@ export function login(credentials, callback) {
     return (dispatch) => {
         request.then((data: res) => {
             localStorage.QLoopJWT = data.data.token;
+            localStorage.data = JSON.stringify(data.data.data);
             callback();
             dispatch(userLoggedIn(data.data));
         });
@@ -27,6 +28,7 @@ export function login(credentials, callback) {
 export function logout() {
     return (dispatch) => {
         localStorage.removeItem("QLoopJWT");
+        localStorage.removeItem("data");
         dispatch(userLoggedOut());
     }
 }
