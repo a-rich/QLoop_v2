@@ -6,11 +6,14 @@ class BoothRegistry():
     def __init__(self):
         self.booths = set()
 
+
     def add_booth(self, booth):
         self.booths.add(booth)
 
+
     def remove_booth(self, booth):
         self.booths.remove(booth)
+
 
     def show_booths(self):
         """
@@ -21,6 +24,7 @@ class BoothRegistry():
         return [(b.creator, b.current_song, b.access_level) for b in self.booths
                 if b.access_level == 'open' or b.access_level == 'password_protected']
 
+
     def join_booth(self, booth, dj):
         """
             Adds a new user to the given booth object's DJs dictionary.
@@ -28,6 +32,8 @@ class BoothRegistry():
         # TODO: if authorized...
 
         booth.add_dj(dj)
+
+
 
 class Booth():
     """
@@ -42,11 +48,12 @@ class Booth():
 
         self.creator = creator.username
         self.access_level = access_level
-        self.djs = {self.creator: {'booth_enqueue_count': 0, 'queue': list()}}
+        self.djs = {self.creator: list()}
         self.dj_order = list(self.creator)
         self.current_dj = 0
         self.queue = list()
         self.current_song = None
+
 
     def add_dj(self, dj):
         """
@@ -54,10 +61,11 @@ class Booth():
         """
 
         if dj.username not in self.djs:
-            self.djs[dj.username] = {'booth_enqueue_count': self.find_min(), 'queue': list()}
+            self.djs[dj.username] = list()
             self.dj_order.append(dj.username)
         else:
             return "User is already in this booth's DJ pool."
+
 
     def remove_dj(self, dj):
         """
@@ -70,20 +78,19 @@ class Booth():
         else:
             return "User has already left this booth's DJ pool."
 
+
     def dj_enqueue(self, dj, song):
         """
             Add a song to the user's personal queue...if this user is being
             waited on, resume dequeueing other users' personal queues.
         """
 
-        dj = self.djs[dj.username]
-        dj['queue'].append(song)
-        dj['booth_enqueue_count'] += 1
+        self.djs[dj.username].append(song)
 
         if self.dj_order[self.current_dj % len(self.djs)] == dj.username:
-            next_dj = self.djs[self.dj_order[self.current_dj % len(self.djs)]]
-            while len(next_dj['queue']) > 0:
-                self.booth_enqueue(next_dj['queue'].pop(0))
+            next_dj_queue = self.djs[self.dj_order[self.current_dj % len(self.djs)]]
+            while len(next_dj_queue) > 0:
+                self.booth_enqueue(next_dj_queue.pop(0))
                 self.current_dj += 1
                 next_dj = self.djs[self.dj_order[self.current_dj % len(self.djs)]]
 
@@ -94,18 +101,12 @@ class Booth():
             queue.
         """
 
-        return self.djs[dj.username]['queue'].pop(0)
+        return self.djs[dj.username].pop(0)
+
 
     def booth_enqueue(self, song):
         """
             Put a user's choosen song into the booth's queue.
         """
 
-        pass
-
-    def find_min(self):
-        """
-            Get the minimum BOOTH_ENQUEUE_COUNT of all users in this booth.
-        """
-
-        return min([v['booth_enqueue_count'] for v in self.djs.values()])
+        self.queue.append(song)
