@@ -56,5 +56,5 @@ def join_booth(bid):
     """
 
     user = User.objects.get(username=get_jwt_identity())
-    booth_details = booth_registry.join_booth(bid, user.username)
+    booth_details = booth_registry.join_booth(int(bid), user.username)
     return json.dumps({'data': booth_details})
