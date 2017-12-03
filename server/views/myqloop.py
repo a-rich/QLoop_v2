@@ -1,16 +1,10 @@
 import json
 import os
-from bson import Binary
 from __main__ import app
-from flask import request, session, redirect, url_for, render_template, flash, send_from_directory
-from models import db, User, Song
-from util import send_email, allowed_file
-from itsdangerous import URLSafeTimedSerializer
+from flask import request, session, send_from_directory
+from models import User, Song
+from mongoengine.queryset.visitor import Q
 from werkzeug import secure_filename
-from queue_manager import Booth, BoothRegistry
-
-ts = URLSafeTimedSerializer(app.config['SECRET_KEY'])  # Tokenize acct. mgmt. emails
-booth_registry = BoothRegistry()
 
 
 """
@@ -61,7 +55,12 @@ def edit_profile():
     user = User.from_json(session['user'])
 
     if request.files:
-        img = request.files[''] if request.files[''] else request.files['files']
+        try:
+            img = request.files['files']
+        except KeyError:
+            img = request.files['']
+        except:
+            raise "Upload file key error{}".format(request.files)
         path = app.config['UPLOAD_FOLDER'] + user.username + "-" + secure_filename(img.filename)
         img.save(path)
 
@@ -92,12 +91,12 @@ def find_users():
         Returns the list of users in the User model whose username or email
         match the search string.
     """
+    # TODO: only() doesn't work
 
     search_string = request.get_json()['query']
-    users = User.objects(Q(username=search_string)
-            or Q(email=search_string)).only('username', 'email')
+    users = User.objects(Q(email=search_string) | Q(username=search_string)).only('username', 'email')
 
-    return json.dumps({'data': users})
+    return json.dumps({'data': [u.to_json() for u in users]})
 
 
 @app.route('/api/users/add_friend/', methods=['POST'])
@@ -126,6 +125,7 @@ def remove_friend():
     """
         Remove user FID from user's friends.
     """
+    # TODO: test this endpoint
 
     errors = {}
     friend_email = request.get_json()['email']
@@ -147,6 +147,7 @@ def remove_song():
     """
         Remove song SID from user's favorite songs.
     """
+    # TODO: test this endpoint
 
     song = request.get_json()['sid']
     user = User.from_json(session['user'])

@@ -54,7 +54,10 @@ class BoothRegistry():
 
         b = self.booths[bid]
         b.add_dj(user)
-        return [b.dj_order, b.current_dj, b.queue, b.current_song]
+        return {"djs": b.dj_order,
+                "current_dj": b.current_dj,
+                "queue": b.queue,
+                "current_song": b.current_song}
 
 
 
@@ -73,7 +76,7 @@ class Booth():
         self.creator = user
         self.access_level = access_level
         self.djs = {self.creator: list()}
-        self.dj_order = list(self.creator)
+        self.dj_order = [self.creator]
         self.current_dj = 0
         self.queue = list()
         self.current_song = None
