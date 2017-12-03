@@ -58,7 +58,7 @@ class NavbarComponent extends Component {
 
 function mapStateToProps(state) {
     return {
-        isAuthenticated: !!state.credentials.token
+        isAuthenticated: !!state.credentials.jwt
     }
 }
 

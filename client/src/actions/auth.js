@@ -17,7 +17,7 @@ export function login(credentials, callback) {
 
     return (dispatch) => {
         request.then((data: res) => {
-            localStorage.QLoopJWT = data.data.token;
+            localStorage.QLoopJWT = data.data.jwt;
             localStorage.data = JSON.stringify(data.data.data);
             callback();
             dispatch(userLoggedIn(data.data));

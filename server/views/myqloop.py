@@ -34,7 +34,8 @@ def fetch_profile():
             'profile_pic': user.profile_pic,
             'email': user.email,
             'favorite_songs': user.favorite_songs_list,
-            'friends': user.friends_list
+            'friends': user.friends_list,
+            'username': user.username
         }
         session['user'] = user.to_json()
         token = create_jwt(identity=user.username)
