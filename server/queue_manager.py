@@ -1,52 +1,76 @@
 class BoothRegistry():
     """
-        Set storing booth objects.
+        Keeps track of all active booths as a dictionary keyed by booth ID.
     """
 
     def __init__(self):
-        self.booths = set()
+        """
+            Initializes the booth registry's dictionary and the ID variable
+            used to key this dictionary.
+        """
+
+        self.booths = {}
+        self.booth_id = 0
 
 
-    def add_booth(self, booth):
-        self.booths.add(booth)
+    def add_booth(self, user, access_level):
+        """
+            Creates a new booth, increments the booth ID, and then returns the
+            booth ID of the newly created booth.
+        """
+
+        self.booths[self.booth_id] = Booth(self.booth_id, user, access_level)
+        self.booth_id += 1
+        return self.booth_id - 1
 
 
-    def remove_booth(self, booth):
-        self.booths.remove(booth)
+    def remove_booth(self, bid):
+        """
+            Deletes from the booth registry's dictionary the booth with booth
+            ID == BID.
+        """
+
+        del self.booths[bid]
 
 
     def show_booths(self):
         """
-            Returns a list of public booths to be displayed in the
-            FETCH_PUBLIC_BOOTHS view.
+            Returns a list of tuples representing public booths to be displayed
+            in the FETCH_PUBLIC_BOOTHS view. Each tuple is of the form
+            (BOOTH_ID, CREATOR, CURRENT_SONG, ACCESS_LEVEL).
         """
 
-        return [(b.creator, b.current_song, b.access_level) for b in self.booths
-                if b.access_level == 'open' or b.access_level == 'password_protected']
+        return [(b.bid, b.creator, b.current_song, b.access_level)
+                for b in self.booths.values()
+                if b.access_level == 'open'
+                or b.access_level == 'password_protected']
 
 
-    def join_booth(self, booth, dj):
+    def join_booth(self, bid, user):
         """
-            Adds a new user to the given booth object's DJs dictionary.
+            Adds a new user to the booth with booth ID == BID.
         """
-        # TODO: if authorized...
+        # TODO: ensure user is authorized to join the booth
 
-        booth.add_dj(dj)
+        b = self.booths[bid]
+        b.add_dj(user)
+        return [b.dj_order, b.current_dj, b.queue, b.current_song]
 
 
 
 class Booth():
     """
-        Booth session containing DJs and songs.
+        Booth object containing DJs, songs, and other booth related state.
     """
 
-    def __init__(self, creator, access_level):
+    def __init__(self, bid, user, access_level):
         """
             Creates a new booth and inserts the booth's creator into the DJ
             list.
         """
 
-        self.creator = creator.username
+        self.bid = bid
+        self.creator = user
         self.access_level = access_level
         self.djs = {self.creator: list()}
         self.dj_order = list(self.creator)
@@ -55,58 +79,46 @@ class Booth():
         self.current_song = None
 
 
-    def add_dj(self, dj):
+    def add_dj(self, user):
         """
             If user is not already in the booth, add them.
         """
 
-        if dj.username not in self.djs:
-            self.djs[dj.username] = list()
-            self.dj_order.append(dj.username)
+        if user not in self.djs:
+            self.djs[user] = list()
+            self.dj_order.append(user)
         else:
             return "User is already in this booth's DJ pool."
 
 
-    def remove_dj(self, dj):
+    def remove_dj(self, user):
         """
             If user has not already been removed form the booth, remove them.
         """
+        # TODO: might have to do something with self.current_dj after removal
 
-        if dj.username in self.djs:
-            self.djs.pop(dj.username, None)
-            self.dj_order.remove(dj.username)
+        if user in self.djs:
+            self.djs.pop(user, None)
+            self.dj_order.remove(user)
         else:
             return "User has already left this booth's DJ pool."
 
 
-    def dj_enqueue(self, dj, song):
+    def enqueue_song(self, user, song):
         """
-            Add a song to the user's personal queue...if this user is being
-            waited on, resume dequeueing other users' personal queues.
+            Add a song to the user's personal queue. If this user is being
+            waited on, resume dequeuing other users' personal queues. Returns
+            the name of the DJ who needs to choose a song before dequeuing may
+            resume.
         """
 
-        self.djs[dj.username].append(song)
+        self.djs[user].append(song)
 
-        if self.dj_order[self.current_dj % len(self.djs)] == dj.username:
-            next_dj_queue = self.djs[self.dj_order[self.current_dj % len(self.djs)]]
+        if self.dj_order[self.current_dj % len(self.djs)] == user:
+            next_dj_queue = self.djs[user]
             while len(next_dj_queue) > 0:
-                self.booth_enqueue(next_dj_queue.pop(0))
+                self.queue.append(next_dj_queue.pop(0))
                 self.current_dj += 1
-                next_dj = self.djs[self.dj_order[self.current_dj % len(self.djs)]]
+                next_dj_queue = self.djs[self.dj_order[self.current_dj % len(self.djs)]]
 
-
-    def dj_dequeue(self, dj):
-        """
-            Remove a song from a user's personal queue to put into the booth's
-            queue.
-        """
-
-        return self.djs[dj.username].pop(0)
-
-
-    def booth_enqueue(self, song):
-        """
-            Put a user's choosen song into the booth's queue.
-        """
-
-        self.queue.append(song)
+            return self.dj_order[self.current_dj]

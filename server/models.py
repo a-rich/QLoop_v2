@@ -19,6 +19,7 @@ class User(db.Document):
     profile_pic = db.StringField(default='')
     favorite_songs_list = db.ListField(db.StringField(default=''))
     friends_list = db.ListField(db.StringField(default=''))
+    creator_status = db.IntField()
 
     @staticmethod
     def check_for_existing_user(email, username):
