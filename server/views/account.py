@@ -1,16 +1,11 @@
 import json
-import os
-from bson import Binary
 from __main__ import app
-from flask import request, session, redirect, url_for, render_template, flash, send_from_directory
-from models import db, User, Song
-from util import send_email, allowed_file
+from flask import request, redirect, url_for, render_template
+from models import User, Song
+from util import send_email
 from itsdangerous import URLSafeTimedSerializer
-from werkzeug import secure_filename
-from queue_manager import Booth, BoothRegistry
 
 ts = URLSafeTimedSerializer(app.config['SECRET_KEY'])  # Tokenize acct. mgmt. emails
-booth_registry = BoothRegistry()
 
 
 """
