@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 
-UPLOAD_FOLDER = 'thumbs/'
+UPLOAD_FOLDER = 'static/imgs'
 
 app = Flask(__name__)                                  # Actual Flask app.
 CORS(app)                                              # Cross origin requests
