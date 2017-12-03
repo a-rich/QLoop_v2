@@ -1,16 +1,13 @@
 import json
-import os
-from bson import Binary
 from __main__ import app
-from flask import request, session, redirect, url_for, render_template, flash, send_from_directory
-from models import db, User, Song
-from util import send_email, allowed_file
-from itsdangerous import URLSafeTimedSerializer
+from flask import request, session
+from models import User, Song
 from werkzeug import secure_filename
 from queue_manager import Booth, BoothRegistry
+from flask_jwt import jwt_required
 
-ts = URLSafeTimedSerializer(app.config['SECRET_KEY'])  # Tokenize acct. mgmt. emails
 booth_registry = BoothRegistry()
+
 
 
 """
@@ -21,6 +18,7 @@ booth_registry = BoothRegistry()
 
 
 @app.route('/api/create_booth/', methods=['POST'])
+@jwt_required()
 def create_booth():
     """
         Create a new booth using the request's ACCESS_LEVEL parameter and the
@@ -33,10 +31,11 @@ def create_booth():
     user = User.from_json(session['user'])
     bid = booth_registry.add_booth(user.username, access_level)
     user.update(creator_status=bid) # Use BID as req param for JOIN_BOOTH view
-    return json.dumps({'booth_id': bid})
+    return join_booth(bid)
 
 
 @app.route('/api/booths/', methods=['GET'])
+@jwt_required()
 def fetch_public_booths():
     """
         Fetch all the public and password protected booths. Returns a list of
@@ -48,6 +47,7 @@ def fetch_public_booths():
 
 
 @app.route('/api/booths/<bid>/', methods=['GET'])
+@jwt_required()
 def join_booth(bid):
     """
         Join a booth by adding the username of the user stored in the session
