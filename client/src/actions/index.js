@@ -1,5 +1,4 @@
 import axios from 'axios';
-
 import { CREATE_USER, RECOVER_USER } from '../types';
 import { ROOT_URL } from '../types';
 

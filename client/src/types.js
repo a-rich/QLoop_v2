@@ -4,3 +4,7 @@ export const CREATE_USER = 'create_user';
 export const RECOVER_USER = 'recover_user';
 export const RESET_PASSWORD = 'reset_password';
 export const ROOT_URL = 'http://localhost:5000';
+
+export const FILE_MANAGEMENT = {
+    PROFILE_PICTURE_UPLOAD : "profile_picture_upload"
+};

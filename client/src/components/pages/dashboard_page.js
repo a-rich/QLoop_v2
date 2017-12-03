@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Image, Grid, Row, Col } from 'react-bootstrap';
-
+import { ProfilePictureUploadComponent } from '../dashboard_components/profile_picture_upload_component'
 import ProfilePic from '../../profile_pic.jpg';
 import '../../css/dashboard_page.css';
 
@@ -13,6 +13,7 @@ class DashboardPage extends Component {
                     <Row>
                         <Col xs={6} md={3}>
                             <Image src={ProfilePic} responsive />
+                            <ProfilePictureUploadComponent/>
                         </Col>
                         <Col id="username" xs={6} md={4}>
                             <h1>{this.props.username}</h1>
@@ -30,6 +31,11 @@ class DashboardPage extends Component {
             </div>
         );
     }
+
+    
+
+
+
 }
 
 function mapStateToProps(state) {
