@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import { Form, Col, FormControl, ControlLabel, FormGroup, Button, HelpBlock } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import { validateEmail } from '../../utils/misc';
-import ForgotPasswordOverlay from '../overlays/forgot_password_overlay';
 
 class LoginForm extends Component {
     constructor(props){
