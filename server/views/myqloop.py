@@ -49,7 +49,7 @@ def fetch_profile():
     return json.dumps({'errors': errors, 'data': data, 'token': "ToBeReplacedWithActualJWT"})
 
 
-@app.route('/api/users/edit_profile/', methods=['PUT'])
+@app.route('/api/users/edit_profile/', methods=['POST'])
 def edit_profile():
     """
         Update user's profile image.
