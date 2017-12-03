@@ -5,7 +5,7 @@ from flask import request, session, send_from_directory
 from models import User, Song
 from mongoengine.queryset.visitor import Q
 from werkzeug import secure_filename
-from flask_jwt import jwt_required
+from flask_jwt_simple import jwt_required, create_jwt, get_jwt_identity
 
 
 """
@@ -37,15 +37,17 @@ def fetch_profile():
             'friends': user.friends_list
         }
         session['user'] = user.to_json()
+        token = create_jwt(identity=user.username)
     except:
         errors['login'] = 'Invalid credentials...please try again.'
+        token = None
         data = {}
 
-    return json.dumps({'errors': errors, 'data': data, 'token': "ToBeReplacedWithActualJWT"})
+    return json.dumps({'errors': errors, 'data': data, 'jwt': token})
 
 
 @app.route('/api/users/edit_profile/', methods=['POST'])
-@jwt_required()
+@jwt_required
 def edit_profile():
     """
         Update user's profile image.
@@ -54,7 +56,7 @@ def edit_profile():
     # TODO: figure out how to force client browser to refresh user in session
 
     errors = {}
-    user = User.from_json(session['user'])
+    user = User.objects.get(username=get_jwt_identity())
 
     if request.files:
         try:
@@ -79,6 +81,7 @@ def edit_profile():
 
 
 @app.route('/api/static/<path:filename>', methods=['GET'])
+@jwt_required
 def get_image(filename):
     """
         Serves user profile images to front end.
@@ -88,7 +91,7 @@ def get_image(filename):
 
 
 @app.route('/api/users/find_users/', methods=['POST'])
-@jwt_required()
+@jwt_required
 def find_users():
     """
         Returns the list of users in the User model whose username or email
@@ -103,7 +106,7 @@ def find_users():
 
 
 @app.route('/api/users/add_friend/', methods=['POST'])
-@jwt_required()
+@jwt_required
 def add_friend():
     """
         Add user FID to user's friends.
@@ -117,7 +120,7 @@ def add_friend():
         errors['add_friend'] = 'There is no user with that email.'
         return json.dumps({'errors': errors})
 
-    user = User.from_json(session['user'])
+    user = User.objects.get(username=get_jwt_identity())
     if friend.id not in [User.from_json(f).id for f in user.friends_list]:
         user.update(push__friends_list=friend.to_json())
 
@@ -125,7 +128,7 @@ def add_friend():
 
 
 @app.route('/api/users/remove_friend/', methods=['POST'])
-@jwt_required()
+@jwt_required
 def remove_friend():
     """
         Remove user FID from user's friends.
@@ -139,7 +142,7 @@ def remove_friend():
         errors['remove_friend'] = 'There is no user with that email.'
         return json.dumps({'errors': errors})
 
-    user = User.from_json(session['user'])
+    user = User.objects.get(username=get_jwt_identity())
     if friend.id in [User.from_json(f).id for f in user.friends_list]:
         user.update(pull__friends_list=friend.to_json())
 
@@ -147,7 +150,7 @@ def remove_friend():
 
 
 @app.route('/api/users/remove_song/', methods=['POST'])
-@jwt_required()
+@jwt_required
 def remove_song():
     """
         Remove song SID from user's favorite songs.
@@ -155,7 +158,7 @@ def remove_song():
     # TODO: test this endpoint
 
     song = request.get_json()['sid']
-    user = User.from_json(session['user'])
+    user = User.objects.get(username=get_jwt_identity())
     user.update(pull__favorite_songs_list=song)
 
     return json.dumps({})
