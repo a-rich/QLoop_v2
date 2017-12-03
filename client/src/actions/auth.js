@@ -13,7 +13,7 @@ export const userLoggedOut = () => ({
 
 
 export function login(credentials, callback) {
-    const request = axios.post(`${ROOT_URL}/api/user/`, credentials);
+    const request = axios.post(`${ROOT_URL}/api/users/`, credentials);
 
     return (dispatch) => {
         request.then((data: res) => {
