@@ -5,6 +5,7 @@ from flask import request, session, send_from_directory
 from models import User, Song
 from mongoengine.queryset.visitor import Q
 from werkzeug import secure_filename
+from flask_jwt import jwt_required
 
 
 """
@@ -44,6 +45,7 @@ def fetch_profile():
 
 
 @app.route('/api/users/edit_profile/', methods=['POST'])
+@jwt_required()
 def edit_profile():
     """
         Update user's profile image.
@@ -86,6 +88,7 @@ def get_image(filename):
 
 
 @app.route('/api/users/find_users/', methods=['POST'])
+@jwt_required()
 def find_users():
     """
         Returns the list of users in the User model whose username or email
@@ -100,6 +103,7 @@ def find_users():
 
 
 @app.route('/api/users/add_friend/', methods=['POST'])
+@jwt_required()
 def add_friend():
     """
         Add user FID to user's friends.
@@ -121,11 +125,11 @@ def add_friend():
 
 
 @app.route('/api/users/remove_friend/', methods=['POST'])
+@jwt_required()
 def remove_friend():
     """
         Remove user FID from user's friends.
     """
-    # TODO: test this endpoint
 
     errors = {}
     friend_email = request.get_json()['email']
@@ -143,6 +147,7 @@ def remove_friend():
 
 
 @app.route('/api/users/remove_song/', methods=['POST'])
+@jwt_required()
 def remove_song():
     """
         Remove song SID from user's favorite songs.
