@@ -1,7 +1,7 @@
 import json
 import os
 from __main__ import app
-from flask import request, session, send_from_directory
+from flask import request, send_from_directory
 from models import User, Song
 from mongoengine.queryset.visitor import Q
 from werkzeug import secure_filename
@@ -15,7 +15,7 @@ from flask_jwt_simple import jwt_required, create_jwt, get_jwt_identity
 """
 
 
-@app.route('/api/users/', methods=['POST'])
+@app.route('/api/my_qloop/', methods=['POST'])
 def fetch_profile():
     """
         Fetch user info: pic, username, email, friends, and favorite songs. To
@@ -36,24 +36,24 @@ def fetch_profile():
             'favorite_songs': user.favorite_songs_list,
             'friends': user.friends_list
         }
-        session['user'] = user.to_json()
         token = create_jwt(identity=user.username)
+        username = user.username
     except:
         errors['login'] = 'Invalid credentials...please try again.'
         token = None
         data = {}
+        username = None
 
-    return json.dumps({'errors': errors, 'data': data, 'jwt': token})
+    return json.dumps({'username': username,'errors': errors, 'data': data, 'jwt': token})
 
 
-@app.route('/api/users/edit_profile/', methods=['POST'])
+@app.route('/api/update_profile/', methods=['POST'])
 @jwt_required
 def edit_profile():
     """
         Update user's profile image.
 
     """
-    # TODO: figure out how to force client browser to refresh user in session
 
     errors = {}
     user = User.objects.get(username=get_jwt_identity())
@@ -75,8 +75,6 @@ def edit_profile():
 
         user.update(profile_pic=path)
 
-    session['user'] = user.to_json()
-
     return json.dumps({'errors': {}})
 
 
@@ -90,7 +88,7 @@ def get_image(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
-@app.route('/api/users/find_users/', methods=['POST'])
+@app.route('/api/find_users/', methods=['POST'])
 @jwt_required
 def find_users():
     """
@@ -105,7 +103,7 @@ def find_users():
     return json.dumps({'data': [u.to_json() for u in users]})
 
 
-@app.route('/api/users/add_friend/', methods=['POST'])
+@app.route('/api/add_friend/', methods=['POST'])
 @jwt_required
 def add_friend():
     """
@@ -127,7 +125,7 @@ def add_friend():
     return json.dumps({'errors': errors})
 
 
-@app.route('/api/users/remove_friend/', methods=['POST'])
+@app.route('/api/remove_friend/', methods=['POST'])
 @jwt_required
 def remove_friend():
     """
@@ -149,16 +147,18 @@ def remove_friend():
     return json.dumps({'errors': errors})
 
 
-@app.route('/api/users/remove_song/', methods=['POST'])
+@app.route('/api/remove_song/', methods=['POST'])
 @jwt_required
 def remove_song():
     """
         Remove song SID from user's favorite songs.
     """
-    # TODO: test this endpoint
+    # TODO: test remove_song endpoint
 
-    song = request.get_json()['sid']
+    song = request.get_json()['song']
+    print song
     user = User.objects.get(username=get_jwt_identity())
+    #user.update(pull__favorite_songs_list=song)
     user.update(pull__favorite_songs_list=song)
 
     return json.dumps({})

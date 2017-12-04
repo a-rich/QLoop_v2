@@ -52,13 +52,15 @@ class BoothRegistry():
         """
         # TODO: ensure user is authorized to join the booth
 
-        b = self.booths[bid]
+        b = self.booths[int(bid)]
         b.add_dj(user)
         return {"djs": b.dj_order,
                 "current_dj": b.current_dj,
                 "queue": b.queue,
                 "current_song": b.current_song}
 
+    def get_booth(self, bid):
+        return self.booths[int(bid)]
 
 
 class Booth():
@@ -117,11 +119,21 @@ class Booth():
 
         self.djs[user].append(song)
 
-        if self.dj_order[self.current_dj % len(self.djs)] == user:
+        if self.dj_order[self.current_dj] == user:
             next_dj_queue = self.djs[user]
             while len(next_dj_queue) > 0:
-                self.queue.append(next_dj_queue.pop(0))
-                self.current_dj += 1
-                next_dj_queue = self.djs[self.dj_order[self.current_dj % len(self.djs)]]
+                self.queue.append({'skip_count': 0, 'song': next_dj_queue.pop(0)})
+                self.current_dj = (self.current_dj + 1) % len(self.djs)
+                next_dj_queue = self.djs[self.dj_order[self.current_dj]]
 
             return self.dj_order[self.current_dj]
+
+    def log_skip_vote(self, url):
+        song = [s for s in self.queue if s['song']['url'] == url][0]
+        song['skip_count'] += 1
+
+        if song['skip_count'] >= len(self.djs)/2:
+            pass
+
+        return song['skip_count']
+

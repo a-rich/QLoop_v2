@@ -15,7 +15,7 @@ ts = URLSafeTimedSerializer(app.config['SECRET_KEY'])  # Tokenize acct. mgmt. em
 """
 
 
-@app.route('/api/users/new/', methods=['POST'])
+@app.route('/api/new_user/', methods=['POST'])
 def create_account():
     """
         Tokenize user's email, username, and password and then send an email
@@ -53,7 +53,7 @@ def create_account():
     return json.dumps({'errors': errors})
 
 
-@app.route('/api/users/confirm_account_creation/<token>/', methods=['GET'])
+@app.route('/api/confirm_account_creation/<token>/', methods=['GET'])
 def confirm_account_creation(token):
     """
         Upon email confirmation, add new user to the User collection.
@@ -78,7 +78,7 @@ def confirm_account_creation(token):
     return redirect('http://www.google.com')
 
 
-@app.route('/api/users/reset_password/', methods=['POST'])
+@app.route('/api/reset_password/', methods=['POST'])
 def recover_account():
     """
         Send recovery email to user so they may reset their password.
@@ -110,7 +110,7 @@ def recover_account():
     return json.dumps({'errors': errors})
 
 
-@app.route('/api/users/reset_password/<token>/', methods=['GET', 'POST'])
+@app.route('/api/reset_password/<token>/', methods=['GET', 'POST'])
 def confirm_account_recovery(token):
     """
         Upon account recovery confirmation, redirect to the React component
