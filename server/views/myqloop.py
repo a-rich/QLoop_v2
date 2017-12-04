@@ -1,3 +1,4 @@
+import re
 import json
 import os
 from __main__ import app
@@ -98,7 +99,8 @@ def find_users():
     # TODO: only() doesn't work
 
     search_string = request.get_json()['query']
-    users = User.objects(Q(email=search_string) | Q(username=search_string)).only('username', 'email')
+    regex = re.compile('.*{}.*'.format(search_string))
+    users = User.objects((Q(email=regex) | Q(username=regex)) & Q(username__ne=get_jwt_identity())).only('username', 'email')
 
     return json.dumps({'data': [u.to_json() for u in users]})
 
