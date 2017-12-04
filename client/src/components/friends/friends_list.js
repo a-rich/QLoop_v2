@@ -1,20 +1,20 @@
 import React from 'react';
 import FriendsListItem from './friends_list_item'
 
-const VideoList = (props) => {
-    const videoitems  = props.friends.map(video => {
+const FriendsList = (props) => {
+    const friends  = props.friends.map(friend => {
         return (
-            <VideoListItem
-                key = {friends.username}
-                video = {video} />
+            <FriendsListItem
+                key = {friend.username}
+                friend = {friend} />
         );
     });
 
     return (
         <ul className = "col-md-4 list-group">
-            {videoitems}
+            {friends}
         </ul>
     )
 }
 
-export default VideoList;
+export default FriendsList;

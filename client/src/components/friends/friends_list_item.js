@@ -1,10 +1,10 @@
 import React from 'react';
 
-const FriendsListItem = ({friends, onFriendSelect}) => {
+const FriendsListItem = ({friend}) => {
     return (
         <li className = "list-group-item">
-                <div className = "friend-body">
-                    <div className = "friend-username">{friends.username}</div>
+                <div>
+                    <div>{friend.username}</div>
                 </div>
         </li>
     )
