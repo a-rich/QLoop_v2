@@ -10,9 +10,18 @@ const FriendsList = (props) => {
         );
     });
 
+    const users  = props.users.map(user => {
+        return (
+            <FriendsListItem
+                key = {user.username}
+                friend = {user} />
+        );
+    });
+
     return (
         <ul className = "col-md-4 list-group">
             {friends}
+            {users}
         </ul>
     )
 }
