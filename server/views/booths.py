@@ -1,13 +1,9 @@
 import json
 from __main__ import app
-from flask import request, session
-from models import User, Song
+from flask import request
+from models import User, Song, booth_registry
 from werkzeug import secure_filename
-from queue_manager import Booth, BoothRegistry
 from flask_jwt_simple import jwt_required, get_jwt_identity
-
-booth_registry = BoothRegistry()
-
 
 
 """
@@ -21,9 +17,8 @@ booth_registry = BoothRegistry()
 @jwt_required
 def create_booth():
     """
-        Create a new booth using the request's ACCESS_LEVEL parameter and the
-        name of the user stored in the session. Returns the booth ID of the
-        newly created booth.
+        Create a new booth using the request's ACCESS_LEVEL parameter. Returns
+        the booth ID of the newly created booth.
     """
 
     req = request.get_json()
@@ -46,15 +41,13 @@ def fetch_public_booths():
     return json.dumps({'data': data})
 
 
-@app.route('/api/booths/<bid>/', methods=['GET'])
+@app.route('/api/join_booth/<bid>/', methods=['GET'])
 @jwt_required
 def join_booth(bid):
     """
-        Join a booth by adding the username of the user stored in the session
-        into that booth's DJ list. Requires the booth ID. Returns the relevant
-        details needed to render the booth view.
+        Join a booth. Requires the booth ID. Returns the relevant details
+        needed to render the booth view.
     """
 
-    user = User.objects.get(username=get_jwt_identity())
-    booth_details = booth_registry.join_booth(int(bid), user.username)
+    booth_details = booth_registry.join_booth(bid, get_jwt_identity())
     return json.dumps({'data': booth_details})
