@@ -94,10 +94,7 @@ def recover_account():
         token = ts.dumps(
                 email,
                 salt='account-recovery-key')
-        recovery_url = url_for(
-                'confirm_account_recovery',
-                token=token,
-                _external=True)
+        recovery_url = "http://localhost:3000/reset_password/" + token
         subject = 'Reset your QLoop account password'
         html = render_template(
                 'account_recovery.html',

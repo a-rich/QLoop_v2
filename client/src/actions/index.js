@@ -4,7 +4,7 @@ import { ROOT_URL } from '../types';
 
 
 export function createUser(values) {
-    const request = axios.post(`${ROOT_URL}/api/users/new/`, values);
+    const request = axios.post(`${ROOT_URL}/api/new_user/`, values);
 
     return {
         type: CREATE_USER,
@@ -13,7 +13,7 @@ export function createUser(values) {
 }
 
 export function recoverUser(values) {
-    const request = axios.post(`${ROOT_URL}/api/users/reset_password/`, values);
+    const request = axios.post(`${ROOT_URL}/api/reset_password/`, values);
 
     return {
         type: RECOVER_USER,
