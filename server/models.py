@@ -1,6 +1,6 @@
 from __main__ import app
 from flask_mongoengine import MongoEngine
-from queue_manager import BoothRegistry
+from util import BoothRegistry
 import json
 
 db = MongoEngine(app)
