@@ -20,7 +20,7 @@ export class FileManagement{
             }
         }
 
-        axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('jwtToken')
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('QLoopJWT');
         axios.post(`${ROOT_URL}/api/users/edit_profile/`, data, config).then( (res) => {
             console.log(res);
             if (res.errors == null) {

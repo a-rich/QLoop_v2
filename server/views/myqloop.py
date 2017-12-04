@@ -78,7 +78,7 @@ def edit_profile():
 
     session['user'] = user.to_json()
 
-    return json.dumps({'errors': {}})
+    return json.dumps({'errors': {}, 'profile_pic': user.profile_pic})
 
 
 @app.route('/api/static/<path:filename>', methods=['GET'])
