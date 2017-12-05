@@ -1,29 +1,97 @@
-import React from 'react';
+import _ from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import axios from 'axios';
+
 import FriendsListItem from './friends_list_item'
+import FriendsSearchBar from './friends_search_bar';
+import { mapper } from '../../utils/misc';
+import { ROOT_URL } from '../../types';
+import '../../css/dashboard_components/booth_main_queue_component_css.css';
 
-const FriendsList = (props) => {
-    const friends  = props.friends.map(friend => {
-        return (
-            <FriendsListItem
-                key = {friend.username}
-                friend = {friend} />
+class FriendsList extends Component {
+    constructor(props){
+        super(props);
+
+        this.state = {
+            users: [],
+            selectedUser: null,
+        };
+
+        this.friendSearch('');
+    }
+
+    friendSearch(term){
+        if (term === "") {
+            return{};
+        }
+        const request = {
+            query: term
+        }
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('QLoopJWT');
+        axios.post(`${ROOT_URL}/api/find_users/`, request)
+            .then((res) => {
+                const values = mapper(res.data.data)
+                this.setState({users: values});
+            });
+    }
+
+    friends() {
+        this.props.friends.map(friend => {
+            return(
+                <div className={"main-queue-item w3-card"} key = {friend.username}>
+                    <div className={"main-queue-item-grid"}>
+                        <FriendsListItem friend = {friend} />
+                    </div>
+                </div>
+            );
+        });
+    }
+
+    users() {
+        if(!this.state.users){
+            return <div></div>
+        }
+        this.state.users.map(user => {
+            return(
+                <div className={"main-queue-item w3-card"} key = {user.username}>
+                    <div className={"main-queue-item-grid"}>
+                        <FriendsListItem friend = {user} />
+                    </div>
+                </div>
+            );
+        });
+    }
+
+    render() {
+        const friendSearch = _.debounce((term) => { this.friendSearch(term) }, 500);
+
+        return(
+            <div>
+                <FriendsSearchBar onSearchtermChange={(term) => friendSearch(term)} />
+                {this.friends.bind(this)}
+                <br />
+                {this.users.bind(this)}
+            </div>
         );
-    });
-
-    const users  = props.users.map(user => {
-        return (
-            <FriendsListItem
-                key = {user.username}
-                friend = {user} />
-        );
-    });
-
-    return (
-        <ul className = "col-md-4 list-group">
-            {friends}
-            {users}
-        </ul>
-    )
+    }
 }
 
-export default FriendsList;
+function mapStateToProps(state) {
+    var friends ={};
+
+    if(!state.credentials.jwt) {
+        return{}
+    }
+    if (!state.credentials.data.friends) {
+        friends = {};
+    } else {
+        friends = mapper(state.credentials.data.friends);
+    }
+
+    return {
+        friends: friends
+    }
+}
+
+export default connect (mapStateToProps)(FriendsList);

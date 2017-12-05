@@ -1,12 +1,12 @@
 import React from 'react';
 
+import '../../css/dashboard_components/booth_main_queue_component_css.css';
+
 const FriendsListItem = ({friend}) => {
     return (
-        <li className = "list-group-item">
-                <div>
-                    <div>{friend.username}</div>
-                </div>
-        </li>
+        <div className="main-list-title-container">
+            <span className="main-list-friend-title">{friend.username}</span>
+        </div>
     )
 }
 
