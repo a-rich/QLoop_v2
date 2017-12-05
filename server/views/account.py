@@ -1,7 +1,7 @@
 import json
 from __main__ import app
 from flask import request, redirect, url_for, render_template
-from models import User, Song
+from models import User
 from util import send_email
 from itsdangerous import URLSafeTimedSerializer
 

@@ -1,9 +1,20 @@
 import json
-from __main__ import app
-from flask import request, redirect, url_for, render_template, flash, send_from_directory
+from __main__ import app, socketio
+from flask_socketio import SocketIO, send, emit, join_room, leave_room
+from flask import request, render_template
 from models import User, Song, booth_registry
 from flask_jwt_simple import jwt_required, get_jwt_identity
 from util import download
+
+@socketio.on('join')
+def join(json):
+    booth_id = json['booth_id']
+    join_room(booth_id)
+
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 
 """
@@ -31,9 +42,10 @@ def enqueue_song():
         return json.dumps({'errors': song})
 
     Song(song['title'], song['url'], song['song_path']).save()
-    booth.enqueue_song(get_jwt_identity(), song)
+    ret = booth.enqueue_song(get_jwt_identity(), song)
 
-    return json.dumps({'song': song})
+    return json.dumps(ret)
+
 
 @app.route('/api/booth/favorite/', methods=['POST'])
 @jwt_required

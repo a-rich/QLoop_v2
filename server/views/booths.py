@@ -1,8 +1,7 @@
 import json
 from __main__ import app
 from flask import request
-from models import User, Song, booth_registry
-from werkzeug import secure_filename
+from models import User, booth_registry
 from flask_jwt_simple import jwt_required, get_jwt_identity
 
 

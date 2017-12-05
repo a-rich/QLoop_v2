@@ -3,6 +3,7 @@ import email.utils
 from email.mime.text import MIMEText
 import os
 import subprocess
+from __main__ import socketio
 
 def download(url, bid):
     if not os.path.isdir('songs/' + bid):
@@ -32,6 +33,7 @@ def download(url, bid):
             'url': url,
             'song_path': repl_str}
 
+
 def send_email(user_email, subject, html):
     """
         Sends an account activation email to the user.
@@ -54,6 +56,7 @@ def send_email(user_email, subject, html):
 def allowed_file(filename):
     allowed_extensions = set(['png', 'jpg', 'jpeg', 'gif'])
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+
 
 class BoothRegistry():
     """
@@ -96,7 +99,7 @@ class BoothRegistry():
             (BOOTH_ID, CREATOR, CURRENT_SONG, ACCESS_LEVEL).
         """
 
-        return [(b.bid, b.creator, b.current_song, b.access_level)
+        return [(b.bid, b.creator, b.queue[b.current_song], b.access_level)
                 for b in self.booths.values()
                 if b.access_level == 'open'
                 or b.access_level == 'password_protected']
@@ -137,8 +140,24 @@ class Booth():
         self.dj_order = [self.creator]
         self.current_dj = 0
         self.queue = list()
-        self.current_song = None
+        self.current_song = 0
 
+
+    def play_song(self, song_path):
+        CHUNK_SIZE = 1024
+        f = open(song_path, 'rb')
+        data = f.read(CHUNK_SIZE)
+
+        while data != '':
+            socketio.emit('song data', {'data': data}, broadcast=True, room=self.bid)
+            data = f.read(CHUNK_SIZE)
+
+        self.current_song += 1
+
+        if self.queue:
+            socketio.emit('new song', broadcast=True, room=self.bid)
+            next_song = self.queue[self.current_song]['song_path']
+            self.play_song(next_song)
 
     def add_dj(self, user):
         """
@@ -175,6 +194,9 @@ class Booth():
 
         self.djs[user].append(song)
 
+        if not self.queue:
+            self.play_song(song['song_path'])
+
         if self.dj_order[self.current_dj] == user:
             next_dj_queue = self.djs[user]
             while len(next_dj_queue) > 0:
@@ -182,13 +204,20 @@ class Booth():
                 self.current_dj = (self.current_dj + 1) % len(self.djs)
                 next_dj_queue = self.djs[self.dj_order[self.current_dj]]
 
-            return self.dj_order[self.current_dj]
+        return {'current_dj': self.dj_order[self.current_dj],
+                'queue': self.queue,
+                'dj_queue': self.djs[user]
+                }
+
 
     def log_skip_vote(self, url):
         song = [s for s in self.queue if s['song']['url'] == url][0]
         song['skip_count'] += 1
 
         if song['skip_count'] >= len(self.djs)/2:
-            pass
+            socketio.emit('new song', broadcast=True, room=self.bid)
+            self.current_song += 1
+            next_song = self.queue[self.current_song]['song_path']
+            self.play_song(next_song)
 
         return song['skip_count']

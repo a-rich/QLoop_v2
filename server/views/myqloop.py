@@ -3,7 +3,7 @@ import json
 import os
 from __main__ import app
 from flask import request, send_from_directory
-from models import User, Song
+from models import User
 from mongoengine.queryset.visitor import Q
 from werkzeug import secure_filename
 from flask_jwt_simple import jwt_required, create_jwt, get_jwt_identity
