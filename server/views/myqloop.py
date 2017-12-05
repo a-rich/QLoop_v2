@@ -35,7 +35,13 @@ def fetch_profile():
             'profile_pic': user.profile_pic,
             'email': user.email,
             'favorite_songs': user.favorite_songs_list,
-            'friends': user.friends_list
+            'friends': [
+                (f,
+                 User.objects.get(username=f)['email'],
+                 User.objects.get(username=f)['creator_status']
+                )
+                for f in user.friends_list
+            ]
         }
         token = create_jwt(identity=user.username)
         username = user.username
@@ -122,7 +128,7 @@ def add_friend():
 
     user = User.objects.get(username=get_jwt_identity())
     if friend.id not in [User.from_json(f).id for f in user.friends_list]:
-        user.update(push__friends_list=friend.to_json())
+        user.update(push__friends_list=(friend['username']))
 
     return json.dumps({'errors': errors})
 
@@ -158,7 +164,6 @@ def remove_song():
     # TODO: test remove_song endpoint
 
     song = request.get_json()['song']
-    print song
     user = User.objects.get(username=get_jwt_identity())
     #user.update(pull__favorite_songs_list=song)
     user.update(pull__favorite_songs_list=song)

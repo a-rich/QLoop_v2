@@ -12,7 +12,7 @@ def download(url, bid):
     song_title = subprocess.check_output([
         'youtube-dl', '--get-filename',
         '--output', "%(title)s",
-        url]).strip()
+        url]).decode('ascii').strip()
 
     if os.path.exists('songs/' + bid + '/' + song_title):
         return "You've already downloaded this song"
@@ -144,13 +144,38 @@ class Booth():
 
 
     def play_song(self, song_path):
-        CHUNK_SIZE = 1024
-        f = open(song_path, 'rb')
-        data = f.read(CHUNK_SIZE)
+        from pydub import AudioSegment
+        import io
 
-        while data != '':
-            socketio.emit('song data', {'data': data}, broadcast=True, room=self.bid)
-            data = f.read(CHUNK_SIZE)
+        song = AudioSegment.from_mp3(song_path)
+
+        #CHUNK_SIZE = 1024
+        #f = open(song_path, 'rb')
+        #data = f.read(CHUNK_SIZE)
+
+        socketio.emit('new song', broadcast=True, room=self.bid)
+        #while data:
+        #    socketio.emit('song data', {'data': data}, broadcast=True, room=self.bid)
+        #    data = f.read(CHUNK_SIZE)
+
+        song_pos = 0
+        while song_pos < 100:
+            p1 = song_pos * 1000
+            p2 = p1 + 1000
+
+            segment = song[p1:p2] # 1 second of audio
+            output = io.BytesIO()
+            segment.export(output, format="mp3")
+            client_data = output.getvalue() # send this to client
+            print(type(client_data))
+
+            song_pos += 1
+
+            #socket.send("HTTP/1.1 200 OK\r\nConnection: Keep-Alive\r\nContent-Type: audio/mp3\r\n\r\n")
+            socketio.emit('song data', {'data': client_data}, broadcast=True, room=self.bid)
+
+
+        socketio.emit('end song', broadcast=True, room=self.bid)
 
         self.current_song += 1
 

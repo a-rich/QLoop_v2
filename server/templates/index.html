@@ -1,16 +1,36 @@
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
 <script type="text/javascript" charset="utf-8">
-    var socket = io.connect('http://' + document.domain + ':' + location.port); // Connect to server
-    socket.on('connect', function() { // When connection successfully established...
-        socket.emit('join', {booth_id: 0}); // Tell server to put this socket in the room associated with booth_id
-        alert("Connecting socket to booth...");
+    var buffer = new Array();
+    var context = new AudioContext();
+    var source = context.createBufferSource();
+    source.connect(context.destination);
+    var i = 0;
+
+    var socket = io.connect('http://' + document.domain + ':' + location.port, {'transports': ['websocket']});
+    socket.on('connect', function() {
+        socket.emit('join', {booth_id: 0});
     });
-    socket.on('new song', function() { // When new song is opening...
-        // Clear Web Audio API stream buffer
-        alert("Clearing audio stream buffer...");
+
+    socket.on('new song', function() {
     });
-    socket.on('song data', function(data) { // When receiving chunk of song data
-        // Append data to Web Audio API stream buffer
-        alert("Adding mp3 data, " + data['stuff']  + " ,to stream buffer...");
+
+    function decodeHandler(data) {
+        console.log(data);
+    }
+
+    socket.on('song data', function(data) {
+        buffer[i] = data;
+        context.decodeAudioData(new ArrayBuffer(data), decodeHandler, function(e) {
+            console.log(e);
+        });
+        if (i == 0) {
+            source.start(0);
+        }
+        i++;
     });
+
+    socket.on('end song', function() {
+        alert(buffer);
+    });
+
 </script>
