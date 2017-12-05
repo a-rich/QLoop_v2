@@ -1,0 +1,54 @@
+.main-wrapper{
+    height: 82vh;
+    width: 100%;
+    font-family: 'Poppins', sans-serif;
+    /* background: purple; */
+}
+.grid-container{
+    display: grid;
+    height: 100%;
+    width: 100%;
+    grid-template-rows: repeat(2, 1fr);
+    grid-gap: 10px;
+    grid-row-gap: 0;
+    grid-template-columns: repeat(11, 1fr);
+}
+
+.main-wrapper{
+    /* overflow: auto */
+    /* overflow: hidden; */
+}
+
+.main-queue-container{
+    height: 40vh;
+    width: 100%;
+    grid-row: 1 / 1;
+    grid-column: 1 / 8;
+    /* background:  #ff22ff; */
+}
+
+.djs-queue-container{
+    height: 40vh;
+    width: 100%;
+    grid-row: 1 / 2;
+    grid-column: 8 / 12;
+    /* background: #F2F22F; */
+}
+
+.bottom-container{
+    height: 40vh;
+    grid-row: 2 / 3;
+    grid-column: 3 / 10;
+    /* background: #a0fff2; */
+}
+
+.music-controls-container{
+    height: 10vh;
+    /* margin-top: 10px; */
+    background: #e6e6ec;
+}
+
+.full-size{
+    height:100%;
+    width: 100%;
+}
