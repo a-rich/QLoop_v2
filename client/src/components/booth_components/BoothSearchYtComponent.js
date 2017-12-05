@@ -31,13 +31,13 @@ class BoothSearchYtComponent extends Component{
     }
     generateMySearchCardsJSX(){
         var resultArr = this.state.songObjects.map((item, i )=>{ return(
-            <div className={"my-yt-search--item w3-card"}>
+            <div className={"my-yt-search-item w3-card"}>
                     <div className={"my-yt-search-item-grid"}>
                         <div className="my-yt-search-title-container">
                              <span className = {"my-yt-search-song-title"}>{item.title}</span>
                         
                         </div>
-                        <button className={"my-yt-serach-item-button-add w3-card-2"}onClick={this.addSongToQueue.bind(this, item)}></button>
+                        <button className={"my-yt-search-item-button-add w3-card-2"}onClick={this.addSongToQueue.bind(this, item)}></button>
 
                     </div>
 

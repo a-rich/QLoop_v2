@@ -1,0 +1,49 @@
+import React, { Component } from 'react';
+import { Image } from 'react-bootstrap';
+import "../../css/createBooth/create_booth.css";
+
+class CreateBoothComponent extends Component{
+    constructor(){
+        super();
+    }
+    render(){
+        return(
+            <div className={"main-wrapper"}>
+                <div className={"grid-container"}>
+                    <div className={"create-booth-container w3-card-4"}>
+                        
+                    </div> 
+                </div>  
+            </div> 
+        )
+    }
+}
+export default CreateBoothComponent;
+
+
+
+
+.main-wrapper{
+    height: 100vh;
+    /* width: 100vw; */
+    font-family: 'Poppins', sans-serif;
+    background: rgba(0, 0, 0, 0.401)
+    /* background: purple; */
+}
+
+.grid-container{
+    width: 100%;
+    height: 100%;
+    grid-template-rows: repeat(10, 1fr);
+    grid-template-columns: repeat(10, 1fr);
+}
+
+.create-booth-container{
+    /* margin: auto; */
+    height: 100%;
+    width: 100%;
+    grid-row: 4 / 8;
+    grid-column: 4 / 8;
+    
+    background: white;
+}

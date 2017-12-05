@@ -1,8 +1,10 @@
+/*CSS for your list of Queue */
+
 .my-yt-search-scrollable{
     
-    height: 80%;
-    overflow: auto;
-    color: rgb(22.5,111,123)
+        height: 80%;
+        overflow: auto;
+        color: rgb(22.5,111,123)
     }
     
     .my-yt-search-non-scrollable{
@@ -25,8 +27,9 @@
     }
     
     .my-yt-search-item{
-        height:40vh;
-        width: 100%;
+        height: 8vh;
+        /* background: green; */
+        margin: 15px;
     }
     .my-yt-search-item-grid{
         height: 100%;
@@ -40,7 +43,7 @@
         font-size: 17px;
         font-weight: 600;
     }
-    .my-yt-serach-item-button-add{
+    .my-yt-search-item-button-add{
         grid-column: 19/21;
         height: 50px;
         width: 50px;

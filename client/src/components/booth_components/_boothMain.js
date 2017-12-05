@@ -10,6 +10,9 @@ class BoothMainComponent extends Component{
 
     constructor(){
         super();
+        this.state = {
+            showSearch: false,
+        }
     }
 
     render(){
@@ -23,11 +26,19 @@ class BoothMainComponent extends Component{
                         <BoothDjListComponent> </BoothDjListComponent>
                     </div> 
                     <div className={"bottom-container"}>
-                        <div className={"my-yt-container w3-card-4"}> 
-                            <BoothMyYtComponent> </BoothMyYtComponent>
+                        <div className={"w3-card-4"}>
+                            {
+                                this.state.showSearch === false 
+                                ?<BoothMyYtComponent> </BoothMyYtComponent> 
+                                :<div> </div>
+                            }
                         </div>
-                        <div className={"my-search-container w3-card-4"}> 
-                            <BoothSearchYtComponent> </BoothSearchYtComponent>
+                        <div className={" w3-card-4"}> 
+                            {
+                                this.state.showSearch === true 
+                                ?<BoothSearchYtComponent> </BoothSearchYtComponent> 
+                                :<div> </div>
+                            }
                         </div>
                     </div>
                 </div>

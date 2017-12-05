@@ -33,7 +33,7 @@
     }
     .my-yt-queue-item-grid{
         height: 100%;
-        min-height: 50px;
+        min-height: 90px;
         display: grid;
         width: 100%;
         grid-template-rows: auto;
