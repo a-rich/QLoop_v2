@@ -37,7 +37,7 @@ class FriendsList extends Component {
     }
 
     friends() {
-        this.props.friends.map(friend => {
+        var resultJSX = this.props.friends.map(friend => {
             return(
                 <div className={"main-queue-item w3-card"} key = {friend.username}>
                     <div className={"main-queue-item-grid"}>
@@ -46,13 +46,14 @@ class FriendsList extends Component {
                 </div>
             );
         });
+        return resultJSX
     }
 
     users() {
         if(!this.state.users){
             return <div></div>
         }
-        this.state.users.map(user => {
+        var resultJSX = this.state.users.map(user => {
             return(
                 <div className={"main-queue-item w3-card"} key = {user.username}>
                     <div className={"main-queue-item-grid"}>
@@ -61,6 +62,7 @@ class FriendsList extends Component {
                 </div>
             );
         });
+        return resultJSX
     }
 
     render() {
@@ -69,12 +71,13 @@ class FriendsList extends Component {
         return(
             <div>
                 <FriendsSearchBar onSearchtermChange={(term) => friendSearch(term)} />
-                {this.friends.bind(this)}
+                {this.friends()}
                 <br />
-                {this.users.bind(this)}
+                {this.users()}
             </div>
         );
     }
+
 }
 
 function mapStateToProps(state) {
