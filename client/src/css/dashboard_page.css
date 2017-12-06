@@ -1,0 +1,9 @@
+#username {
+    padding-top: 9%;
+}
+
+#container {
+    min-height: 400px;
+    border:2px solid;
+    margin: 2px;
+}
