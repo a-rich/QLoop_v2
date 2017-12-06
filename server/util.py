@@ -3,6 +3,9 @@ import email.utils
 from email.mime.text import MIMEText
 import os
 import subprocess
+from __main__ import socketio
+from pydub import AudioSegment
+import io
 
 def download(url, bid):
     if not os.path.isdir('songs/' + bid):
@@ -11,7 +14,7 @@ def download(url, bid):
     song_title = subprocess.check_output([
         'youtube-dl', '--get-filename',
         '--output', "%(title)s",
-        url]).strip()
+        url]).decode('ascii').strip()
 
     if os.path.exists('songs/' + bid + '/' + song_title):
         return "You've already downloaded this song"
@@ -31,6 +34,7 @@ def download(url, bid):
     return {'title': song_title,
             'url': url,
             'song_path': repl_str}
+
 
 def send_email(user_email, subject, html):
     """
@@ -54,6 +58,7 @@ def send_email(user_email, subject, html):
 def allowed_file(filename):
     allowed_extensions = set(['png', 'jpg', 'jpeg', 'gif'])
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+
 
 class BoothRegistry():
     """
@@ -96,7 +101,7 @@ class BoothRegistry():
             (BOOTH_ID, CREATOR, CURRENT_SONG, ACCESS_LEVEL).
         """
 
-        return [(b.bid, b.creator, b.current_song, b.access_level)
+        return [(b.bid, b.creator, b.queue[b.current_song], b.access_level)
                 for b in self.booths.values()
                 if b.access_level == 'open'
                 or b.access_level == 'password_protected']
@@ -110,13 +115,21 @@ class BoothRegistry():
 
         b = self.booths[int(bid)]
         b.add_dj(user)
+
+        try:
+            current_song = b.queue[b.current_song]
+        except:
+            current_song = None
+
         return {"djs": b.dj_order,
-                "current_dj": b.current_dj,
+                "current_dj": b.dj_order[b.current_dj],
                 "queue": b.queue,
-                "current_song": b.current_song}
+                "current_song": current_song}
+
 
     def get_booth(self, bid):
         return self.booths[int(bid)]
+
 
 
 class Booth():
@@ -137,8 +150,35 @@ class Booth():
         self.dj_order = [self.creator]
         self.current_dj = 0
         self.queue = list()
-        self.current_song = None
+        self.current_song = 0
 
+
+    def play_song(self, song_path):
+        song = AudioSegment.from_mp3(song_path)
+        FRAME_CHUNK_SIZE = 1000
+
+        song_pos = 0
+        while song_pos < len(song)/FRAME_CHUNK_SIZE:
+            p1 = song_pos * FRAME_CHUNK_SIZE
+            p2 = p1 + FRAME_CHUNK_SIZE
+
+            segment = song[p1:p2]
+
+            output = io.BytesIO()
+            segment.export(output, format="mp3")
+            data = output.getvalue()
+
+            socketio.emit('song data', data, broadcast=True, room=self.bid)
+
+            song_pos += 1
+
+
+        self.current_song += 1
+
+        if self.queue:
+            socketio.emit('new song', broadcast=True, room=self.bid)
+            next_song = self.queue[self.current_song]['song_path']
+            self.play_song(next_song)
 
     def add_dj(self, user):
         """
@@ -175,6 +215,9 @@ class Booth():
 
         self.djs[user].append(song)
 
+        if not self.queue:
+            self.play_song(song['song_path'])
+
         if self.dj_order[self.current_dj] == user:
             next_dj_queue = self.djs[user]
             while len(next_dj_queue) > 0:
@@ -182,13 +225,20 @@ class Booth():
                 self.current_dj = (self.current_dj + 1) % len(self.djs)
                 next_dj_queue = self.djs[self.dj_order[self.current_dj]]
 
-            return self.dj_order[self.current_dj]
+        return {'current_dj': self.dj_order[self.current_dj],
+                'queue': self.queue,
+                'dj_queue': self.djs[user]
+                }
+
 
     def log_skip_vote(self, url):
         song = [s for s in self.queue if s['song']['url'] == url][0]
         song['skip_count'] += 1
 
         if song['skip_count'] >= len(self.djs)/2:
-            pass
+            socketio.emit('new song', broadcast=True, room=self.bid)
+            self.current_song += 1
+            next_song = self.queue[self.current_song]['song_path']
+            self.play_song(next_song)
 
         return song['skip_count']
