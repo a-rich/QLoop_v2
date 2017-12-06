@@ -30,7 +30,9 @@ class NavbarComponent extends Component {
                             </IndexLinkContainer>
 
                             <NavDropdown eventKey={2} title="Booths" id="basic-nav-dropdown">
+                                <LinkContainer to="/booths/public">
                                 <MenuItem eventKey={2.1}>Public Booths</MenuItem>
+                                </LinkContainer>
                                 <MenuItem divider />
                                 <LinkContainer to="/booths/create">
                                     <MenuItem eventKey={2.2}>Create Booth</MenuItem>

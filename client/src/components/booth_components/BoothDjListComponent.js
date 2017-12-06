@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Image } from 'react-bootstrap';
 import "../../css/booth_components/booth_dj_list_component.css";
+import inviteDjOverlay from '../overlays/invite_dj_overlays/invite_dj_overlay';
 
 
 class BoothDjListComponent extends Component{
@@ -17,9 +18,19 @@ class BoothDjListComponent extends Component{
         return(
             <div className={"dj-queue-full-size"}>
                
-                        <div className= {"dj-queue-non-scrollable"}>
-                            Djs:
+                       
+                        <div className={"dj-title-item-nonscrollable-grid w3-card"}>
+                        <div className="dj-title-non-scrollable container">
+                        
+                            Djs 
                         </div>
+                        <div className= {"invite-button-container"}>
+                        <button onClickonClick={<inviteDjOverlay/>} className ={"dj-list-item-button-invite-DJ w3-card-2"}>Invite DJ</button>
+                        </div>
+                       
+                        </div>
+                        
+                        
 
                         <div className= {"dj-queue-scrollable"}>
                             {this.generateDjCardsJSX()}

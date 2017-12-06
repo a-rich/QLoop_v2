@@ -9,6 +9,7 @@ import DashboardPage from './components/pages/dashboard_page';
 import ResetPasswordPage from './components/pages/reset_password_page';
 import BoothMainComponent from './components/booth_components/_boothMain';
 import CreateBoothComponent from './components/create_booth/createBooth';
+import CreatePublicBoothComponent from './components/public_booth_components/_publicBoothMain';
 import UserRoute from './components/routes/user_routes';
 import GuestRoute from './components/routes/guest_routes';
 
@@ -21,6 +22,7 @@ const App = ({ location }) => (
             <GuestRoute location={location} path="/login" exact component={LoginPage} />
             <GuestRoute location={location} path="/reset_password/:token" exact component={ResetPasswordPage} />
             <UserRoute location={location} path="/myQLoop" exact component={DashboardPage} />
+            <UserRoute location={location} path="/booths/public" exact component={CreatePublicBoothComponent} />
             <UserRoute location={location} path="/booths/create" exact component={CreateBoothComponent} />
             <UserRoute location={location} path="/booths/booth/:booth" exact component={BoothMainComponent} />
         </div>

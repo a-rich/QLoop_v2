@@ -11,7 +11,7 @@ class BoothMainComponent extends Component{
     constructor(){
         super();
         this.state = {
-            showSearch: false,
+            showSearch: true,
         }
     }
 
