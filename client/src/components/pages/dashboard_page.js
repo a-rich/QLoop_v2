@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Image, Grid, Row, Col } from 'react-bootstrap';
+import { Image, Grid, Row, Col , Well} from 'react-bootstrap';
+
 
 import FriendsList from '../friends/friends_list';
+import SongsList from '../dashboard_components/songs/songs_list';
+import { addFriend, removeFriend, removeFavoriteSong } from '../../actions/index';
 import { ProfilePictureUploadComponent } from '../dashboard_components/profile_picture_upload_component'
 import ProfilePic from '../../profile_pic.jpg';
 
@@ -11,6 +14,19 @@ import '../../css/dashboard_components/booth_main_queue_component_css.css';
 import '../../css/dashboard_components/main.css';
 
 class DashboardPage extends Component {
+
+    addFriend(data) {
+        this.props.addFriend(data);
+    }
+
+    removeFriend(data) {
+        this.props.removeFriend(data);
+    }
+
+    removeFavoriteSong(data) {
+        this.props.removeFavoriteSong(data);
+    }
+
     render() {
 
         return(
@@ -25,23 +41,24 @@ class DashboardPage extends Component {
                             <h1>{this.props.username}</h1>
                         </Col>
                     </Row>
+                    <br />
                     <Row>
-                        <Col>
-                            <div className="main-list-full-size">
-                                <div className= {"main-list-non-scrollable"}>
-                                    Friends:
-                                </div>
-
-                                <div className="main-list-scrollable">
-                                    <FriendsList />
-                                </div>
-                            </div>
+                        <Col xs={6} md={6}>
+                            <Well bsSize="large">
+                                <FriendsList
+                                    removeFriend={this.removeFriend.bind(this)}
+                                    addFriend={this.addFriend.bind(this)}
+                                />
+                            </Well>
                         </Col>
-                        <Col>
-                            <h1>{this.props.username}</h1>
+                        <Col xs={6} md={6}>
+                            <Well bsSize="large">
+                                <SongsList removeFavoriteSong={this.removeFavoriteSong.bind(this)}/>
+                            </Well>
                         </Col>
                     </Row>
                 </Grid>
+
             </div>
         );
     }
@@ -58,4 +75,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(DashboardPage);
+export default connect(mapStateToProps, { addFriend, removeFriend, removeFavoriteSong })(DashboardPage);

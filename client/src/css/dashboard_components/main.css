@@ -20,7 +20,7 @@
     /* overflow: hidden; */
 }
 
-.main-queue-container{
+.main-list-container{
     height: 40vh;
     width: 100%;
     grid-row: 1 / 1;

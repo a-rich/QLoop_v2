@@ -15,6 +15,7 @@ class FriendsList extends Component {
 
         this.state = {
             users: [],
+            searched: false,
             selectedUser: null,
         };
 
@@ -23,6 +24,7 @@ class FriendsList extends Component {
 
     friendSearch(term){
         if (term === "") {
+            this.setState({ searched: false });
             return{};
         }
         const request = {
@@ -32,16 +34,23 @@ class FriendsList extends Component {
         axios.post(`${ROOT_URL}/api/find_users/`, request)
             .then((res) => {
                 const values = mapper(res.data.data)
-                this.setState({users: values});
+                this.setState({
+                    users: values,
+                    searched: true
+                });
             });
     }
 
     friends() {
         var resultJSX = this.props.friends.map(friend => {
             return(
-                <div className={"main-queue-item w3-card"} key = {friend.username}>
-                    <div className={"main-queue-item-grid"}>
-                        <FriendsListItem friend = {friend} />
+                <div key = {friend.username}>
+                    <div>
+                        <FriendsListItem
+                            removeFriend={this.props.removeFriend}
+                            friend={friend}
+                            friends={this.props.friends}
+                        />
                     </div>
                 </div>
             );
@@ -50,14 +59,16 @@ class FriendsList extends Component {
     }
 
     users() {
-        if(!this.state.users){
-            return <div></div>
-        }
         var resultJSX = this.state.users.map(user => {
             return(
-                <div className={"main-queue-item w3-card"} key = {user.username}>
-                    <div className={"main-queue-item-grid"}>
-                        <FriendsListItem friend = {user} />
+                <div key = {user.username}>
+                    <div>
+                        <FriendsListItem
+                            removeFriend={this.props.removeFriend}
+                            addFriend={this.props.addFriend}
+                            friend={user}
+                            friends={this.props.friends}
+                        />
                     </div>
                 </div>
             );
@@ -70,10 +81,11 @@ class FriendsList extends Component {
 
         return(
             <div>
-                <FriendsSearchBar onSearchtermChange={(term) => friendSearch(term)} />
-                {this.friends()}
-                <br />
-                {this.users()}
+                <h3>Friends:</h3>
+                <FriendsSearchBar className="padding" onSearchtermChange={(term) => friendSearch(term)} />
+                <div className={"main-list-scrollable"}>
+                    {this.state.searched? this.users() : this.friends()}
+                </div>
             </div>
         );
     }

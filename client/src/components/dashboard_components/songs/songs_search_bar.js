@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 
-import '../../css/dashboard_components/booth_main_queue_component_css.css';
+import '../../../css/dashboard_components/booth_main_queue_component_css.css';
 
-class FriendsSearchBar extends Component {
+class SongsSearchBar extends Component {
     constructor(props){
         super(props);
 
@@ -26,4 +26,4 @@ class FriendsSearchBar extends Component {
     }
 }
 
-export default FriendsSearchBar;
+export default SongsSearchBar;
