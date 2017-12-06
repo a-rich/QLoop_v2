@@ -1,0 +1,53 @@
+.create-booth-main-wrapper{
+    height: 100vh;
+    width: 100%;
+    font-family: 'Poppins', sans-serif;
+    background: rgba(0, 0, 0, 0.401)
+}
+
+.create-booth-grid-container{
+    display: grid;
+    height: 100%;
+    grid-template-rows: repeat(10, 1fr);
+    grid-template-columns: repeat(10, 1fr);
+}
+
+
+.create-booth-title{
+    margin-left: 8%;
+    margin-top: 5%;
+    color: black;
+    font-size: 25px;
+}
+
+.create-booth-container{
+    grid-row: 4 / 8;
+    grid-column: 4 / 8;
+    background: white;
+}
+
+.button-container{
+    height: 15%;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.form-container{
+    margin-top: 5%;
+    height: 50%;
+    margin-left: 8%;
+}
+
+.create{
+    margin-left: 5%;
+    width: 40%;
+    height: 100%;
+    color: green;
+
+}
+
+.cancel{
+    margin-left: 7.5%;
+    width: 40%;
+    height: 100%;
+    color: red;
+}

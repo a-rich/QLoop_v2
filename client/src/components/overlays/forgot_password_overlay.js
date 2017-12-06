@@ -49,8 +49,8 @@ class ForgotPasswordOverlay extends Component {
         const { handleSubmit } = this.props;
 
         return(
-        <div>
-            <Nav>
+        <div  >
+            <Nav className>
                 <NavItem onClick={this.open.bind(this)}>
                     Forgot Password
                 </NavItem>

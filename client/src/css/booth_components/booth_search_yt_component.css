@@ -1,0 +1,60 @@
+/*CSS for your list of Queue */
+
+.my-yt-search-scrollable{
+    
+        height: 80%;
+        overflow: auto;
+        color: rgb(22.5,111,123)
+    }
+    
+    .my-yt-search-non-scrollable{
+        height: 20%;
+        padding-top: 10px;
+        padding-left: 15px;
+        /* margin: 10px 0 15px, 15px; */
+        font-family: 'Poppins', sans-serif;
+        font-size: 20px;
+        font-weight: 600;
+        /* min-height: 30px; */
+        display: block;
+        color: purple;
+    }
+    
+    .my-yt-search-full-size{
+        height:40vh;
+        width: 100%;
+        /* background: black; */
+    }
+    
+    .my-yt-search-item{
+        height: 8vh;
+        /* background: green; */
+        margin: 15px;
+    }
+    .my-yt-search-item-grid{
+        height: 100%;
+        min-height: 90px;
+        display: grid;
+        width: 100%;
+        grid-template-rows: auto;
+        grid-template-columns: repeat(20, 1fr);
+    }
+    .my-yt-search-song-title{
+        font-size: 17px;
+        font-weight: 600;
+    }
+    .my-yt-search-item-button-add{
+        grid-column: 19/21;
+        height: 50px;
+        width: 50px;
+        margin-top: 15px;
+        border: none;
+        background: rgba(255, 0, 0, 0.196);
+    }
+    .my-yt-search-title-container{
+        grid-column:  1 /15;
+        margin-top: 25px;
+        margin-left: 10px;
+    }
+    
+    

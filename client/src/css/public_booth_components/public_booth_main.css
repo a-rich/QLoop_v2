@@ -1,0 +1,54 @@
+.main-wrapper{
+    height: 100vh;
+    /* width: 100vw; */
+    font-family: 'Poppins', sans-serif;
+    /* background: rgba(0, 0, 0, 0.401) */
+    /* background: purple; */
+}
+
+.grid-container{
+    width: 100%;
+    height: 100%;
+    grid-template-rows: repeat(11, 1fr);
+    grid-template-columns: repeat(11, 1fr);
+}
+
+.create-public-booth-container{
+    /* margin: auto; */
+    height: 100%;
+    width: 100%;
+    grid-row: 2/ 10;
+    grid-column: 2/ 10;
+    
+    background: white;
+}
+.public-booth-non-scrollable{
+    height: 10%;
+    padding-top: 10px;
+    padding-left: 15px;
+    /* margin: 10px 0 15px, 15px; */
+    font-family: 'Poppins', sans-serif;
+    font-size: 25px;
+    font-weight: 600;
+    color: purple;
+}
+.public-booth-scrollable{
+    padding-top: 10px;
+    padding-left: 15px;
+    padding-right: 10px;
+    height: 90%;
+    overflow: auto;
+    color: rgb(22.5,111,123)
+}
+.public-list-container{
+    grid-column:  2/ 10;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+.cardViewForContent-grid:hover{
+    color: rgba(89, 125, 224, 0.945);
+}
+.main-queue-song-in-progress{
+    font-size: 17px;
+    font-weight: 600;
+}
