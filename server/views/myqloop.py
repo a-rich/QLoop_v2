@@ -71,6 +71,8 @@ def edit_profile():
             img.save(path)
         except KeyError:
             img = request.files['']
+            path = app.config['UPLOAD_FOLDER'] + user.username + "-" + secure_filename(img.filename)
+            img.save(path)
         except:
             raise "Upload file key error{}".format(request.files)
 
@@ -79,7 +81,7 @@ def edit_profile():
         except:
             pass
 
-        user.update(profile_pic=path)
+        user.modify(profile_pic=path)
 
     return json.dumps({'errors': {}, 'profile_pic': path})
 
@@ -107,7 +109,7 @@ def find_users():
     regex = re.compile('.*{}.*'.format(search_string))
     users = User.objects((Q(email=regex) | Q(username=regex)) & Q(username__ne=get_jwt_identity())).only('username', 'email')
 
-    return json.dumps({'data': [u['username'] for u in users]})
+    return json.dumps({'data': [(u['username'], u['profile_pic']) for u in users]})
 
 
 @app.route('/api/add_friend/', methods=['POST'])
@@ -118,16 +120,11 @@ def add_friend():
     """
 
     errors = {}
-    friend_email = request.get_json()['email']
-    friend = User.objects.get(email=friend_email)
-
-    if not friend:
-        errors['add_friend'] = 'There is no user with that email.'
-        return json.dumps({'errors': errors})
+    friend = request.get_json()['username']
 
     user = User.objects.get(username=get_jwt_identity())
-    if friend['username'] not in user.friends_list:
-        user.update(push__friends_list=(friend['username']))
+    if friend not in user.friends_list:
+        user.modify(push__friends_list=(friend))
 
     friends = [User.objects.get(username=f) for f in user.friends_list]
     friends = [
@@ -146,16 +143,11 @@ def remove_friend():
     """
 
     errors = {}
-    friend_email = request.get_json()['email']
-    friend = User.objects.get(email=friend_email)
-
-    if not friend:
-        errors['remove_friend'] = 'There is no user with that email.'
-        return json.dumps({'errors': errors})
+    friend = request.get_json()['username']
 
     user = User.objects.get(username=get_jwt_identity())
-    if friend['username'] in user.friends_list:
-        user.update(pull__friends_list=friend['username'])
+    if friend in user.friends_list:
+        user.modify(pull__friends_list=friend)
 
     friends = [User.objects.get(username=f) for f in user.friends_list]
     friends = [
@@ -172,10 +164,9 @@ def remove_song():
     """
         Remove song SID from user's favorite songs.
     """
-    # TODO: test remove_song endpoint
 
     song = request.get_json()['song']
     user = User.objects.get(username=get_jwt_identity())
-    user.update(pull__favorite_songs_list=song)
+    user.modify(pull__favorite_songs_list=json.dumps(song))
 
     return json.dumps({'errors': {}, 'data': user.favorite_songs_list})

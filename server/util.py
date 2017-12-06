@@ -115,10 +115,16 @@ class BoothRegistry():
 
         b = self.booths[int(bid)]
         b.add_dj(user)
+
+        try:
+            current_song = b.queue[b.current_song]
+        except:
+            current_song = None
+
         return {"djs": b.dj_order,
                 "current_dj": b.dj_order[b.current_dj],
                 "queue": b.queue,
-                "current_song": b.queue[b.current_song]}
+                "current_song": current_song}
 
 
     def get_booth(self, bid):

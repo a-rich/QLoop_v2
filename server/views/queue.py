@@ -57,7 +57,7 @@ def favorite_song():
     req = request.get_json()
     song = req['song']
     user = User.objects.get(username=get_jwt_identity())
-    user.update(push__favorite_songs_list=song)
+    user.modify(push__favorite_songs_list=json.dumps(song))
     return json.dumps({'errors': {}}) # dont need to return favorite songs list because this endpoint is only hit from inside a booth
 
 
