@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import {Button} from 'react-bootstrap';
 
 import '../../../css/dashboard_components/booth_main_queue_component_css.css';
 
@@ -15,9 +14,14 @@ class SongsListItem extends Component{
 
     render() {
         return(
-            <div className="w3-card w3-hover-shadow">
-                <span>{this.props.song.name}</span>
-                <Button onClick={this.removeSong.bind(this)}>remove</Button>
+            <div className="w3-card w3-hover-shadow list-item">
+                <h4>
+                    {this.props.song.name}
+                    <i onClick={this.removeSong.bind(this)} 
+                        className="fa fa-trash fa-3 list-icon list-icon-danger"
+                    />
+                </h4>
+                
             </div>
         )
     }

@@ -15,6 +15,7 @@ class FriendsSearchBar extends Component {
                 <input
                     placeholder="Search"
                     value = {this.state.term}
+                    id="search-bar"
                     onChange={event => this.onInputChange(event.target.value)} />
             </div>
         );
