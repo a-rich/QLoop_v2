@@ -8,13 +8,13 @@ from util import download
 
 @socketio.on('join')
 def join(json):
+    """
+        This socket event is triggered only when a user joins a booth or when
+        a user creates a booth (creating implies joining).
+    """
+
     booth_id = json['booth_id']
     join_room(booth_id)
-
-
-@app.route('/')
-def index():
-    return render_template('index.html')
 
 
 """
@@ -58,7 +58,7 @@ def favorite_song():
     song = req['song']
     user = User.objects.get(username=get_jwt_identity())
     user.update(push__favorite_songs_list=song)
-    return json.dumps({})
+    return json.dumps({'errors': {}}) # dont need to return favorite songs list because this endpoint is only hit from inside a booth
 
 
 @app.route('/api/booth/skip/', methods=['POST'])

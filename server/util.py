@@ -4,6 +4,8 @@ from email.mime.text import MIMEText
 import os
 import subprocess
 from __main__ import socketio
+from pydub import AudioSegment
+import io
 
 def download(url, bid):
     if not os.path.isdir('songs/' + bid):
@@ -114,12 +116,14 @@ class BoothRegistry():
         b = self.booths[int(bid)]
         b.add_dj(user)
         return {"djs": b.dj_order,
-                "current_dj": b.current_dj,
+                "current_dj": b.dj_order[b.current_dj],
                 "queue": b.queue,
-                "current_song": b.current_song}
+                "current_song": b.queue[b.current_song]}
+
 
     def get_booth(self, bid):
         return self.booths[int(bid)]
+
 
 
 class Booth():
@@ -144,38 +148,24 @@ class Booth():
 
 
     def play_song(self, song_path):
-        from pydub import AudioSegment
-        import io
-
         song = AudioSegment.from_mp3(song_path)
-
-        #CHUNK_SIZE = 1024
-        #f = open(song_path, 'rb')
-        #data = f.read(CHUNK_SIZE)
-
-        socketio.emit('new song', broadcast=True, room=self.bid)
-        #while data:
-        #    socketio.emit('song data', {'data': data}, broadcast=True, room=self.bid)
-        #    data = f.read(CHUNK_SIZE)
+        FRAME_CHUNK_SIZE = 1000
 
         song_pos = 0
-        while song_pos < 100:
-            p1 = song_pos * 1000
-            p2 = p1 + 1000
+        while song_pos < len(song)/FRAME_CHUNK_SIZE:
+            p1 = song_pos * FRAME_CHUNK_SIZE
+            p2 = p1 + FRAME_CHUNK_SIZE
 
-            segment = song[p1:p2] # 1 second of audio
+            segment = song[p1:p2]
+
             output = io.BytesIO()
             segment.export(output, format="mp3")
-            client_data = output.getvalue() # send this to client
-            print(type(client_data))
+            data = output.getvalue()
+
+            socketio.emit('song data', data, broadcast=True, room=self.bid)
 
             song_pos += 1
 
-            #socket.send("HTTP/1.1 200 OK\r\nConnection: Keep-Alive\r\nContent-Type: audio/mp3\r\n\r\n")
-            socketio.emit('song data', {'data': client_data}, broadcast=True, room=self.bid)
-
-
-        socketio.emit('end song', broadcast=True, room=self.bid)
 
         self.current_song += 1
 

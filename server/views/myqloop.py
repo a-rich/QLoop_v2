@@ -31,16 +31,14 @@ def fetch_profile():
     try:
         req = request.get_json()
         user = User.objects.get(email=req['email'], password=req['password'])
+        friends = [User.objects.get(username=f) for f in user.friends_list]
         data = {
             'profile_pic': user.profile_pic,
             'email': user.email,
             'favorite_songs': user.favorite_songs_list,
             'friends': [
-                (f,
-                 User.objects.get(username=f)['email'],
-                 User.objects.get(username=f)['creator_status']
-                )
-                for f in user.friends_list
+                (f['username'], f['email'], f['creator_status'])
+                for f in friends
             ]
         }
         token = create_jwt(identity=user.username)
@@ -63,17 +61,18 @@ def edit_profile():
     """
 
     errors = {}
+    path = None
     user = User.objects.get(username=get_jwt_identity())
 
     if request.files:
         try:
             img = request.files['files']
+            path = app.config['UPLOAD_FOLDER'] + user.username + "-" + secure_filename(img.filename)
+            img.save(path)
         except KeyError:
             img = request.files['']
         except:
             raise "Upload file key error{}".format(request.files)
-        path = app.config['UPLOAD_FOLDER'] + user.username + "-" + secure_filename(img.filename)
-        img.save(path)
 
         try:
             os.remove(user.profile_pic)
@@ -82,7 +81,7 @@ def edit_profile():
 
         user.update(profile_pic=path)
 
-    return json.dumps({'errors': {}})
+    return json.dumps({'errors': {}, 'profile_pic': path})
 
 
 @app.route('/api/static/<path:filename>', methods=['GET'])
@@ -108,7 +107,7 @@ def find_users():
     regex = re.compile('.*{}.*'.format(search_string))
     users = User.objects((Q(email=regex) | Q(username=regex)) & Q(username__ne=get_jwt_identity())).only('username', 'email')
 
-    return json.dumps({'data': [u.to_json() for u in users]})
+    return json.dumps({'data': [u['username'] for u in users]})
 
 
 @app.route('/api/add_friend/', methods=['POST'])
@@ -127,10 +126,16 @@ def add_friend():
         return json.dumps({'errors': errors})
 
     user = User.objects.get(username=get_jwt_identity())
-    if friend.id not in [User.from_json(f).id for f in user.friends_list]:
+    if friend['username'] not in user.friends_list:
         user.update(push__friends_list=(friend['username']))
 
-    return json.dumps({'errors': errors})
+    friends = [User.objects.get(username=f) for f in user.friends_list]
+    friends = [
+        (f['username'], f['email'], f['creator_status'])
+        for f in friends
+    ]
+
+    return json.dumps({'errors': errors, 'data': friends})
 
 
 @app.route('/api/remove_friend/', methods=['POST'])
@@ -149,10 +154,16 @@ def remove_friend():
         return json.dumps({'errors': errors})
 
     user = User.objects.get(username=get_jwt_identity())
-    if friend.id in [User.from_json(f).id for f in user.friends_list]:
-        user.update(pull__friends_list=friend.to_json())
+    if friend['username'] in user.friends_list:
+        user.update(pull__friends_list=friend['username'])
 
-    return json.dumps({'errors': errors})
+    friends = [User.objects.get(username=f) for f in user.friends_list]
+    friends = [
+        (f['username'], f['email'], f['creator_status'])
+        for f in friends
+    ]
+
+    return json.dumps({'errors': errors, 'data': friends})
 
 
 @app.route('/api/remove_song/', methods=['POST'])
@@ -165,7 +176,6 @@ def remove_song():
 
     song = request.get_json()['song']
     user = User.objects.get(username=get_jwt_identity())
-    #user.update(pull__favorite_songs_list=song)
     user.update(pull__favorite_songs_list=song)
 
-    return json.dumps({})
+    return json.dumps({'errors': {}, 'data': user.favorite_songs_list})
