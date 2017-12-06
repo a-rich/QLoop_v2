@@ -1,15 +1,16 @@
 from __main__ import app
 from flask_mongoengine import MongoEngine
+from util import BoothRegistry
 import json
 
 db = MongoEngine(app)
+booth_registry = BoothRegistry()
 
 
 class Song(db.Document):
-    song_title = db.StringField(default='')
-    artist_name = db.StringField(default='')
+    title = db.StringField(default='')
     url = db.URLField()
-    mp3 = db.BinaryField()
+    mp3 = db.StringField(default='')
 
 
 class User(db.Document):

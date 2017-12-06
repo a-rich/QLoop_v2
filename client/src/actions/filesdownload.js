@@ -27,7 +27,8 @@ export class FileManagement{
             }
         }
 
-        axios.post(`${ROOT_URL}/api/users/edit_profile/`, data, config).then( (res) => {
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('QLoopJWT');
+        axios.post(`${ROOT_URL}/api/users/update_profile/`, data, config).then( (res) => {
             console.log(res);
             if (res.errors == null) {
                 callback(null)

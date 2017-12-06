@@ -1,20 +1,112 @@
-import React from 'react';
+import _ from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import axios from 'axios';
+
 import FriendsListItem from './friends_list_item'
+import FriendsSearchBar from './friends_search_bar';
+import { mapper } from '../../utils/misc';
+import { ROOT_URL } from '../../types';
+import '../../css/dashboard_components/booth_main_queue_component_css.css';
 
-const VideoList = (props) => {
-    const videoitems  = props.friends.map(video => {
-        return (
-            <VideoListItem
-                key = {friends.username}
-                video = {video} />
+class FriendsList extends Component {
+    constructor(props){
+        super(props);
+
+        this.state = {
+            users: [],
+            searched: false,
+            selectedUser: null,
+        };
+
+        this.friendSearch('');
+    }
+
+    friendSearch(term){
+        if (term === "") {
+            this.setState({ searched: false });
+            return{};
+        }
+        const request = {
+            query: term
+        }
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('QLoopJWT');
+        axios.post(`${ROOT_URL}/api/find_users/`, request)
+            .then((res) => {
+                const values = mapper(res.data.data)
+                this.setState({
+                    users: values,
+                    searched: true
+                });
+            });
+    }
+
+    friends() {
+        var resultJSX = this.props.friends.map(friend => {
+            return(
+                <div key = {friend.username}>
+                    <div>
+                        <FriendsListItem
+                            removeFriend={this.props.removeFriend}
+                            friend={friend}
+                            friends={this.props.friends}
+                        />
+                    </div>
+                </div>
+            );
+        });
+        return resultJSX
+    }
+
+    users() {
+        var resultJSX = this.state.users.map(user => {
+            return(
+                <div key = {user.username}>
+                    <div>
+                        <FriendsListItem
+                            removeFriend={this.props.removeFriend}
+                            addFriend={this.props.addFriend}
+                            friend={user}
+                            friends={this.props.friends}
+                        />
+                    </div>
+                </div>
+            );
+        });
+        return resultJSX
+    }
+
+    render() {
+        const friendSearch = _.debounce((term) => { this.friendSearch(term) }, 500);
+
+        return(
+            <div>
+                <h3>Friends:</h3>
+                <FriendsSearchBar className="padding" onSearchtermChange={(term) => friendSearch(term)} />
+                <div className={"main-list-scrollable"}>
+                    {this.state.searched? this.users() : this.friends()}
+                </div>
+            </div>
         );
-    });
+    }
 
-    return (
-        <ul className = "col-md-4 list-group">
-            {videoitems}
-        </ul>
-    )
 }
 
-export default VideoList;
+function mapStateToProps(state) {
+    var friends ={};
+
+    if(!state.credentials.jwt) {
+        return{}
+    }
+    if (!state.credentials.data.friends) {
+        friends = {};
+    } else {
+        friends = mapper(state.credentials.data.friends);
+    }
+
+    return {
+        friends: friends
+    }
+}
+
+export default connect (mapStateToProps)(FriendsList);

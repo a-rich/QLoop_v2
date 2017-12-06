@@ -13,11 +13,11 @@ export const userLoggedOut = () => ({
 
 
 export function login(credentials, callback) {
-    const request = axios.post(`${ROOT_URL}/api/users/`, credentials);
+    const request = axios.post(`${ROOT_URL}/api/my_qloop/`, credentials);
 
     return (dispatch) => {
         request.then((data: res) => {
-            localStorage.QLoopJWT = data.data.token;
+            localStorage.QLoopJWT = data.data.jwt;
             localStorage.data = JSON.stringify(data.data.data);
             callback();
             dispatch(userLoggedIn(data.data));
@@ -34,7 +34,7 @@ export function logout() {
 }
 
 export function resetPassword(token, values) {
-    const request = axios.post(`${ROOT_URL}/api/users/reset_password/${token}/`, values);
+    const request = axios.post(`${ROOT_URL}/api/reset_password/${token}/`, values);
 
     return {
         type: RESET_PASSWORD,

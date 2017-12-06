@@ -1,0 +1,39 @@
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+<audio controls autoplay></audio>
+<script type="text/javascript" charset="utf-8">
+    window.MediaSource = window.MediaSource || window.WebKitMediaSource;
+
+    function onSourceOpen(e) {
+        sourceBuffer = ms.addSourceBuffer('audio/mpeg');
+        sourceBuffer.addEventListener('updateend', function() {
+            if (queue.length) {
+                sourceBuffer.appendBuffer(queue.shift());
+            }
+        }, false);
+    }
+
+    var ms = new MediaSource();
+    ms.addEventListener('sourceopen', onSourceOpen.bind(ms), false);
+    var sourceBuffer = null;
+    var queue = [];
+    var start = true;
+    var audio = document.querySelector('audio');
+    audio.src = window.URL.createObjectURL(ms);
+
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+    socket.on('connect', function() {
+        socket.emit('join', {'booth_id': 0});
+    });
+    socket.on('new song', function() {
+        // implement later
+    });
+    socket.on('song data', function(data) {
+        if (start) {
+            sourceBuffer.appendBuffer(data);
+            start = false;
+        } else {
+            console.log("pushing to queue");
+            queue.push(data);
+        }
+    });
+</script>

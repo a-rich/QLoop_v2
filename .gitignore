@@ -1,4 +1,6 @@
 **.sw*
 **.pyc
 **.vim
+**.env
 **venv
+**static/imgs

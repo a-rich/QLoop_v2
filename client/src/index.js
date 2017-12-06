@@ -20,7 +20,7 @@ const store = createStore(
 
 if(localStorage.QLoopJWT) {
     const user = {
-        token: localStorage.QLoopJWT,
+        jwt: localStorage.QLoopJWT,
         data: JSON.parse(localStorage.data)
     };
     store.dispatch(userLoggedIn(user));
