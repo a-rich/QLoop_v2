@@ -14,6 +14,7 @@ class SongsSearchBar extends Component {
             <div className="search-bar">
                 <input
                     placeholder="Search"
+                    id="search-bar"
                     value = {this.state.term}
                     onChange={event => this.onInputChange(event.target.value)} />
             </div>

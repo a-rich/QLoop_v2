@@ -13,6 +13,32 @@
     width:95%;
 }
 
-.search-bar{
-    text-align: center;
+.list-item {
+    padding-top: 15px;
 }
+
+.list-icon {
+    position: relative;
+    float: right;
+    padding-right: 10px;
+}
+
+.list-icon:hover {
+    cursor: pointer; 
+    color:rgb(9, 143, 5);
+}
+
+.list-icon-danger:hover{
+    cursor: pointer; 
+    color:rgb(206, 25, 25);
+}
+
+#search-bar{
+    padding:5px;padding-left:55px;border:1px solid #f5f5f5;
+    font-size:13px;color:gray;
+    background-image:url('http://i47.tinypic.com/r02vbq.png');
+    background-repeat:no-repeat;
+    background-position:left center;outline:0;
+}
+
+

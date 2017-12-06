@@ -44,7 +44,7 @@ class DashboardPage extends Component {
                     <br />
                     <Row>
                         <Col xs={6} md={6}>
-                            <Well bsSize="large">
+                            <Well bsSize="medium">
                                 <FriendsList
                                     removeFriend={this.removeFriend.bind(this)}
                                     addFriend={this.addFriend.bind(this)}
@@ -52,7 +52,7 @@ class DashboardPage extends Component {
                             </Well>
                         </Col>
                         <Col xs={6} md={6}>
-                            <Well bsSize="large">
+                            <Well bsSize="medium">
                                 <SongsList removeFavoriteSong={this.removeFavoriteSong.bind(this)}/>
                             </Well>
                         </Col>

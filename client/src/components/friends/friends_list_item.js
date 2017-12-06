@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import {Button} from 'react-bootstrap';
 
 import '../../css/dashboard_components/booth_main_queue_component_css.css';
 
@@ -29,13 +28,21 @@ class FriendsListItem extends Component{
 
     render() {
         return(
-            <div className="w3-card w3-hover-shadow">
-                <span>{this.props.friend.username}</span>
-                {this.isFriend()?
-                    <Button onClick={this.removeFriend.bind(this)}>remove</Button>
-                    :
-                    <Button onClick={this.addFriend.bind(this)}>add</Button>
-                }
+            <div className="w3-card w3-hover-shadow list-item">
+                <h4>
+                    {this.props.friend.username}
+                    {this.isFriend()?
+                        <i 
+                            onClick={this.removeFriend.bind(this)}
+                            className="fa fa-eraser fa-3 list-icon list-icon-danger"
+                        />
+                        :
+                        <i onClick={this.addFriend.bind(this)}
+                            className="fa fa-plus fa-3 list-icon"
+                        />
+                    }
+                </h4>
+                
             </div>
         )
     }

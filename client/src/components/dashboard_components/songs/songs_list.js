@@ -27,9 +27,6 @@ class SongsList extends Component {
 
         const stateSongs = [];
         const songs = this.props.songs
-        const request = {
-            query: term
-        }
 
         for(let i=0; i<songs.length; i++) {
             if(songs[i].name.includes(term)){
