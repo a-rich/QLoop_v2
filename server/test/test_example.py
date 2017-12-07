@@ -2,9 +2,6 @@ import json
 from flask import url_for
 from qloop.views.booths import create_booth
 
-def test_2_2():
-    assert 2 + 2 == 5
-
 
 #"""
 #    Testing VIEWS/BOOTHS
