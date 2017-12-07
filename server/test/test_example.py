@@ -8,12 +8,12 @@ from qloop.views.booths import create_booth
 """
 
 
-def test_create_booth(client):
-    assert client.post(url_for('/api/create_booth'),
-            data=json.dumps(dict(access_level='open')),
-            content_type='application/json').status_code == 200
-
-
+#def test_create_booth(client):
+#    assert client.post(url_for('/api/create_booth'),
+#            data=json.dumps(dict(access_level='open')),
+#            content_type='application/json').status_code == 200
+#
+#
 #def test_fetch_public_booths(client):
 #    assert client.get(url_for('fetch_public_booths')).status_code == 200
 #
