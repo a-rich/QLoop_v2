@@ -1,9 +1,8 @@
-**.sw*
-**.pyc
-**.vim
-**.env
-**static/imgs
-**egg-info
-**__pycache__
-**.cache
-.gitignore
+**/.cache
+**/.sw*
+**/.env
+**/.pyc
+**/.vim
+**/qloop.egg-info
+**/__pycache__
+server/qloop/static/imgs/**
