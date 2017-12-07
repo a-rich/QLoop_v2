@@ -1,0 +1,2 @@
+FLASK_APP=qloop
+FLASK_DEBUG=true

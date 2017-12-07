@@ -1,4 +1,7 @@
 **.sw*
 **.pyc
 **.vim
-**venv
+**.env
+**.egg-info
+**__pycache__
+**.cache
