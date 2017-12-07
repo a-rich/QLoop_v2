@@ -4,30 +4,30 @@ QLoop
 Installation
 -------------------------
 
-## Clone repository ##
+### Clone repository ###
 `git clone https://github.com/Aweeeezy/QLoop_v2.git`
 
-## Build back end ##
+### Build back end ###
 
-### Create Python virtual environment ###
+#### Create Python virtual environment ####
 `cd QLoop_v2/server`
 
 `python3 -m venv .env`
 
 `source .env/bin/activate`
 
-### Install Python dependencies and set environment variables ###
+#### Install Python dependencies and set environment variables ####
 `pip3 install -e .`
 
-### Run Flask server ###
+#### Run Flask server ####
 `flask run`
 
-## Build front end ##
+### Build front end ###
 
-### Setting up React ###
+#### Setting up React ####
 `cd QLoop_v2/client`
 
 `yarn install`
 
-### Run React server ###
+#### Run React server ####
 `yarn start`
