@@ -1,3 +1,5 @@
+import os
+from dotenv import Dotenv
 from setuptools import setup
 
 setup(
@@ -9,3 +11,6 @@ setup(
         'flask-mongoengine', 'pytest-flask', 'eventlet', 'pydub', 'dotenv'
     ],
 )
+
+dotenv = Dotenv(os.path.join(os.path.dirname(__file__), ".env"))
+os.environ.update(dotenv)
