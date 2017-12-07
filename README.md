@@ -1,51 +1,31 @@
 QLoop
 =========================
 
-Development
+Installation
 -------------------------
 
-### Virtual Environment ###
-**Activate:** `source .env/bin/activate`
+## Clone repository ##
+`git clone https://github.com/Aweeeezy/QLoop_v2.git`
+`cd QLoop_v2`
 
-**Deactivate:** `deactivate`
+## Build back end ##
 
-**Recreate virtual environment:**
+### Create Python virtual environment ###
+`python3 -m venv .env`
+`source .env/bin/activate`
 
-* `cd QLoop/server`
+### Install Python dependencies and set environment variables ###
+`cd QLoop_v2/server`
+`pip3 install -e .`
 
-* `rm -rf .env`
+### Run Flask server ###
+`flask run`
 
-* `python -m pip install virtualenv`
-
-* `virtualenv .env`
-
-* `source .env/bin/activate`
-
-* `python -m pip install Flask PyMongo Flask-MongoAlchemy Flask-WTF itsdangerous`
-
-### Start Server ###
-`python app.py`
-
-Visit the web page at `localhost:5000`.
-
-### Admin  ###
-The admin is hardcoded into the log in route and bypasses authentication from
-the `Users` collection of the database.
-
-Log in as admin using username 'admin' and password 'admin'.
-
-### TODO: ###
-1. Make profile
-   * upload profile image
-   * edit first/last name
-   * edit username
-   * edit email
-   * add/remove friends
-2. Swap out Flask's Werkzeug server with nginx
+## Build front end ##
 
 ### Setting up React ###
-1. Go into the client folder using terminal
-2. `yarn install`
+`cd QLoop_v2/client`
+`yarn install`
 
-### Starting server ###
+### Run React server ###
 `yarn start`
