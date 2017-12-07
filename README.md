@@ -18,7 +18,9 @@ Installation
 
 #### Install Python dependencies and set environment variables ####
 `pip3 install -e .`
+
 `export FLASK_APP=qloop`
+
 `export FLASK_DEBUG=true`
 
 #### Run Flask server ####
