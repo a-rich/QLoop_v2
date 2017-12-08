@@ -26,7 +26,8 @@ export function createPublicBooth(value, callBack) {
 
 export function joinBooth(value, callback) {
     return (dispatch) => {
-        axios.post(`${ROOT_URL}/api/join_booth/${value}/`, { username: JSON.parse(localStorage.data).username })
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('QLoopJWT');
+        axios.post(`${ROOT_URL}/api/join_booth/${value}`)
             .then((data: res) => {
                 callback();
             dispatch({

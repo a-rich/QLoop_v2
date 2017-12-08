@@ -24,6 +24,7 @@ class BoothMainComponent extends Component{
     }
 
     componentWillMount () {
+        this.props.getBoothData();
     }
 
     /*getBoothData() {
@@ -42,7 +43,10 @@ class BoothMainComponent extends Component{
 <div className={"djs-queue-container w3-card-4"}>
                         <BoothDjListComponent> </BoothDjListComponent>
                     </div> 
-*/
+*/  
+    getData(data) {
+
+    }
 
     render(){
         return(
@@ -63,7 +67,7 @@ class BoothMainComponent extends Component{
                         <div className={" w3-card-4"}> 
                             {
                                 this.state.showSearch === true 
-                                ?<BoothSearchYtComponent> </BoothSearchYtComponent> 
+                                ?<BoothSearchYtComponent getData={this.getData.bind(this)}> </BoothSearchYtComponent> 
                                 :<div> </div>
                             }
                         </div>
