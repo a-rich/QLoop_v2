@@ -31,16 +31,11 @@ def fetch_profile():
     try:
         req = request.get_json()
         user = User.objects.get(email=req['email'], password=req['password'])
-        friends = [User.objects.get(username=f) for f in user.friends_list]
         data = {
             'profile_pic': user.profile_pic,
             'username': user.username,
             'email': user.email,
             'favorite_songs': user.favorite_songs_list,
-            'friends': [
-                (f['username'], f['email'], f['creator_status'], f['profile_pic'])
-                for f in friends
-            ]
         }
         token = create_jwt(identity=user.username)
         username = user.username
