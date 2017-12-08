@@ -2,4 +2,5 @@
 **.pyc
 **.vim
 **venv
+**.env
 **static/imgs
