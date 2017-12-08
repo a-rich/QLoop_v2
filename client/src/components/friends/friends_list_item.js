@@ -15,13 +15,13 @@ class FriendsListItem extends Component{
 
     addFriend() {
         const response = {
-            email: this.props.friend.email
+            username: this.props.friend[0]
         };
         this.props.addFriend(response);
     }
     removeFriend() {
         const response = {
-            email: this.props.friend.email
+            username: this.props.friend[0]
         };
         this.props.removeFriend(response);
     }
@@ -30,7 +30,7 @@ class FriendsListItem extends Component{
         return(
             <div className="w3-card w3-hover-shadow list-item">
                 <h4>
-                    {this.props.friend.username}
+                    {this.props.friend[0]}
                     {this.isFriend()?
                         <i 
                             onClick={this.removeFriend.bind(this)}

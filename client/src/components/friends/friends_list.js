@@ -33,18 +33,18 @@ class FriendsList extends Component {
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('QLoopJWT');
         axios.post(`${ROOT_URL}/api/find_users/`, request)
             .then((res) => {
-                const values = mapper(res.data.data)
                 this.setState({
-                    users: values,
+                    users: res.data.data,
                     searched: true
                 });
             });
     }
 
     friends() {
+        console.log(this.props.friends);
         var resultJSX = this.props.friends.map(friend => {
             return(
-                <div key = {friend.username}>
+                <div key = {friend[0]}>
                     <div>
                         <FriendsListItem
                             removeFriend={this.props.removeFriend}
@@ -61,7 +61,7 @@ class FriendsList extends Component {
     users() {
         var resultJSX = this.state.users.map(user => {
             return(
-                <div key = {user.username}>
+                <div key = {user[0]}>
                     <div>
                         <FriendsListItem
                             removeFriend={this.props.removeFriend}
@@ -98,10 +98,10 @@ function mapStateToProps(state) {
     if(!state.credentials.jwt) {
         return{}
     }
-    if (!state.credentials.data.friends) {
-        friends = {};
+    if (!state.friends) {
+        friends = [];
     } else {
-        friends = mapper(state.credentials.data.friends);
+        friends = state.friends;
     }
 
     return {

@@ -5,7 +5,8 @@ import { Image, Grid, Row, Col , Well} from 'react-bootstrap';
 
 import FriendsList from '../friends/friends_list';
 import SongsList from '../dashboard_components/songs/songs_list';
-import { addFriend, removeFriend, removeFavoriteSong } from '../../actions/index';
+import { addFriend, removeFriend, getFriends } from '../../actions/friends'; 
+import { removeFavoriteSong } from '../../actions/index';
 import { ProfilePictureUploadComponent } from '../dashboard_components/profile_picture_upload_component'
 import ProfilePic from '../../profile_pic.jpg';
 
@@ -16,6 +17,7 @@ import '../../css/dashboard_components/main.css';
 class DashboardPage extends Component {
 
     addFriend(data) {
+        console.log(data)
         this.props.addFriend(data);
     }
 
@@ -44,7 +46,7 @@ class DashboardPage extends Component {
                     <br />
                     <Row>
                         <Col xs={6} md={6}>
-                            <Well bsSize="medium">
+                            <Well bsSize="large">
                                 <FriendsList
                                     removeFriend={this.removeFriend.bind(this)}
                                     addFriend={this.addFriend.bind(this)}
@@ -52,7 +54,7 @@ class DashboardPage extends Component {
                             </Well>
                         </Col>
                         <Col xs={6} md={6}>
-                            <Well bsSize="medium">
+                            <Well bsSize="large">
                                 <SongsList removeFavoriteSong={this.removeFavoriteSong.bind(this)}/>
                             </Well>
                         </Col>
