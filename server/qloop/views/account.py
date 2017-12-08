@@ -4,6 +4,7 @@ from flask import request, redirect, url_for, render_template
 from qloop.models import User
 from qloop.utils import send_email
 from itsdangerous import URLSafeTimedSerializer
+from werkzeug.security import generate_password_hash
 
 ts = URLSafeTimedSerializer(app.config['SECRET_KEY'])  # Tokenize acct. mgmt. emails
 
@@ -73,7 +74,7 @@ def confirm_account_creation(token):
         User(
             email=token['email'],
             username=token['username'],
-            password=token['password']).save()
+            password=generate_password_hash(token['password'])).save()
 
     return redirect('http://www.google.com')
 
