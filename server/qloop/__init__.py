@@ -8,7 +8,7 @@ UPLOAD_FOLDER = 'static/imgs/'
 
 def create_app():
     app = Flask(__name__)
-    CORS(app, resources=r"/api/*")
+    CORS(app, resources=r"/api/*", supports_credentials=True)
     app.config['SECRET_KEY'] = ":iw=PO5}H],oEtSa"
     app.config['JWT_SECRET_KEY'] = "fzgk0+\!>~mi`#l'"
     app.config['JWT_EXPIRES'] = datetime.timedelta(days=7)
