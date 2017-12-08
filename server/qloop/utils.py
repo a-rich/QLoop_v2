@@ -115,7 +115,7 @@ class BoothRegistry():
         """
         # TODO: ensure user is authorized to join the booth
 
-        b = self.booths[int(bid)]
+        b = self.booths[int(bid)-1]
         b.add_dj(user)
 
         try:
