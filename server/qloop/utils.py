@@ -13,7 +13,10 @@ def download(url, bid):
     if not os.path.isdir(path):
         os.makedirs(path)
 
-    song_title = subprocess.check_output(['youtube-dl', '--get-filename', '--output', '%(title)s', url]).decode('ascii').strip()
+    try:
+        song_title = subprocess.check_output(['youtube-dl', '--get-filename', '--output', '%(title)s', url]).decode('ascii').strip()
+    except:
+        song_title = 'Song name retrieval unsuccessful'
 
     if os.path.exists('songs/' + bid + '/' + song_title):
         return "You've already downloaded this song"
