@@ -17,6 +17,10 @@ def join(json):
     join_room(booth_id)
 
 
+@app.route('/')
+def index():
+    return render_template('socket_client_code.html')
+
 """
    *****************************************
     Queuing, favoriting, and skipping songs
@@ -36,7 +40,7 @@ def enqueue_song():
     url = req['url']
     booth_id = req['booth_id']
     booth = booth_registry.get_booth(booth_id)
-    song = download(url, booth_id)
+    song = download(url, str(booth_id))
 
     if type(song) is str:
         return json.dumps({'errors': song})

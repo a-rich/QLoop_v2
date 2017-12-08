@@ -8,8 +8,9 @@ from pydub import AudioSegment
 import io
 
 def download(url, bid):
-    if not os.path.isdir('songs/' + bid):
-        os.mkdir('songs/' + bid)
+    path = 'songs/{}'.format(bid)
+    if not os.path.isdir(path):
+        os.makedirs(path)
 
     song_title = subprocess.check_output([
         'youtube-dl', '--get-filename',
