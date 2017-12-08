@@ -82,7 +82,7 @@ class BoothRegistry():
             booth ID of the newly created booth.
         """
 
-        self.booths[self.booth_id] = Booth(self.booth_id, user, access_level)
+        self.booths[self.booth_id - 1] = Booth(self.booth_id, user, access_level)
         self.booth_id += 1
         return self.booth_id - 1
 
@@ -93,7 +93,7 @@ class BoothRegistry():
             ID == BID.
         """
 
-        del self.booths[bid]
+        del self.booths[bid - 1]
 
 
     def show_booths(self):
@@ -131,7 +131,7 @@ class BoothRegistry():
 
 
     def get_booth(self, bid):
-        return self.booths[int(bid)]
+        return self.booths[int(bid) - 1]
 
 
 
