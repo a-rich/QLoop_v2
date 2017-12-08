@@ -10,7 +10,7 @@ import ForgotPasswordOverlay from '../overlays/forgot_password_overlay';
 class LoginPage extends Component {
     submit(data) {
         this.props.login(data, () => {
-            this.props.history.push('/my_qloop')
+            this.props.history.push('/myQLoop')
         });
     }
 
