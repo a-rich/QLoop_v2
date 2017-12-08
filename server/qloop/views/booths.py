@@ -48,7 +48,7 @@ def join_booth(bid):
         needed to render the booth view.
     """
 
-    booth_details = booth_registry.join_booth(bid, username)
+    booth_details = booth_registry.join_booth(bid, get_jwt_identity())
     return json.dumps({'data': booth_details})
 
 
