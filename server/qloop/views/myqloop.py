@@ -38,7 +38,7 @@ def fetch_profile():
             'email': user.email,
             'favorite_songs': user.favorite_songs_list,
             'friends': [
-                (f['username'], f['email'], f['creator_status'])
+                (f['username'], f['email'], f['creator_status'], f['profile_pic'])
                 for f in friends
             ]
         }
@@ -51,6 +51,16 @@ def fetch_profile():
         username = None
 
     return json.dumps({'username': username,'errors': errors, 'data': data, 'jwt': token})
+
+
+@app.route('/api/get_friends/', methods=['GET'])
+@jwt_required
+def get_friends():
+    user = User.objects.get(username=get_jwt_identity())
+    friends = [User.objects.get(username=f) for f in user.friends_list]
+    friends = [(f['username'], f['email'], f['creator_status'], f['profile_pic'])
+               for f in friends]
+    return json.dumps({'friends': friends})
 
 
 @app.route('/api/update_profile/', methods=['POST'])
@@ -129,7 +139,7 @@ def add_friend():
 
     friends = [User.objects.get(username=f) for f in user.friends_list]
     friends = [
-        (f['username'], f['email'], f['creator_status'])
+        (f['username'], f['email'], f['creator_status'], f['profile_pic'])
         for f in friends
     ]
 
