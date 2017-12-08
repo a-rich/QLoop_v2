@@ -1,4 +1,8 @@
+**.cache
 **.sw*
+**.env
 **.pyc
 **.vim
-**venv
+**qloop.egg-info
+**__pycache__
+server/qloop/static/imgs/**
