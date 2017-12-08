@@ -1,21 +1,42 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Image } from 'react-bootstrap';
-import "../../css/booth_components/boothMain.css";
+import SocketIOClient from 'socket.io-client';
 
+import "../../css/booth_components/boothMain.css";
 import  BoothMainQueueComponent  from "./BoothMainQueueComponent";
 import  BoothDjListComponent from "./BoothDjListComponent";
 import  BoothMyYtComponent from "./BoothMyYtComponent";
 import  BoothSearchYtComponent from "./BoothSearchYtComponent";
 import  BootPlayBarComponent from "./BoothPlayBarComponent";
+import  { getBoothData } from "../../actions/createBooth";
 
 class BoothMainComponent extends Component{
-
     constructor(){
         super();
+
+        this.socket = SocketIOClient('127.0.0.1:5000');
+
         this.state = {
             showSearch: true,
         }
     }
+
+    componentWillMount () {
+    }
+
+    /*getBoothData() {
+        const friendSearch = _.debounce((term) => { 
+            this.props.getBoothData()
+        }, 10000);
+        /*var dataLoop = _.debounce(this.props.getBoothData(()=> {
+                console.log("here");
+                this.props.getBoothData()
+            }) , 10000);
+
+            return dataLoop;
+}*/
 
     render(){
         return(
@@ -56,4 +77,10 @@ class BoothMainComponent extends Component{
 
 }
 
-export default BoothMainComponent;
+function mapStateToProps(state) {
+    return {
+
+    }
+}
+
+export default connect(mapStateToProps, { getBoothData })(BoothMainComponent);

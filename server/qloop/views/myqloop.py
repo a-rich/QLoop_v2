@@ -31,7 +31,7 @@ def fetch_profile():
     try:
         req = request.get_json()
         user = User.objects.get(email=req['email'], password=req['password'])
-        user.creator_status = None
+        user.modify(creator_status = None)
         data = {
             'profile_pic': user.profile_pic,
             'username': user.username,

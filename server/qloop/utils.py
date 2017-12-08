@@ -74,7 +74,7 @@ class BoothRegistry():
         """
 
         self.booths = {}
-        self.booth_id = 0
+        self.booth_id = 1
 
     def add_booth(self, user, access_level):
         """
