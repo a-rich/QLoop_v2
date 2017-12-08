@@ -22,13 +22,13 @@ def join(json):
 def connect():
     user = User.objects.get(username=get_jwt_identity())
     user.creator_status=None
-"""
 
 
 @socketio.on('disconnect')
 def disconnet():
     user = User.objects.get(username=get_jwt_identity())
     user.creator_status=None
+"""
 
 @app.route('/')
 def index():
