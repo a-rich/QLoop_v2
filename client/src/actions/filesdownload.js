@@ -18,18 +18,18 @@ export class FileManagement{
         }
         data.append('files', fileInfo)
         data.append("user", user)
-        
+
         var config = {
             withCredentials: true,
             onUploadProgress: function(progressEvent) {
                 var percentCompleted = Math.round( (progressEvent.loaded * 100) / progressEvent.total );
                 progress(percentCompleted);
             }
-            
+
         }
 
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('QLoopJWT');
-        axios.post(`${ROOT_URL}/api/users/update_profile/`, data, config).then( (res) => {
+        axios.post(`${ROOT_URL}/api/update_profile/`, data, config).then( (res) => {
             console.log(res);
             if (res.errors == null) {
                 callback(null)
