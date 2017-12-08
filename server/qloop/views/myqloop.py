@@ -7,7 +7,6 @@ from qloop.models import User
 from mongoengine.queryset.visitor import Q
 from werkzeug import secure_filename
 from flask_jwt_simple import jwt_required, create_jwt, get_jwt_identity
-from werkzeug.security import check_password_hash
 
 
 """
@@ -29,19 +28,19 @@ def fetch_profile():
 
     errors = {}
 
-    req = request.get_json()
-    user = User.objects.get(email=req['email'])
-    user.creator_status = None
-    data = {
-        'profile_pic': user.profile_pic,
-        'username': user.username,
-        'email': user.email,
-        'favorite_songs': user.favorite_songs_list,
-    }
-    token = create_jwt(identity=user.username)
-    username = user.username
-
-    if not check_password_hash(req['password'], user.password):
+    try:
+        req = request.get_json()
+        user = User.objects.get(email=req['email'])
+        user.creator_status = None
+        data = {
+            'profile_pic': user.profile_pic,
+            'username': user.username,
+            'email': user.email,
+            'favorite_songs': user.favorite_songs_list,
+        }
+        token = create_jwt(identity=user.username)
+        username = user.username
+    except:
         errors['login'] = 'Invalid credentials...please try again.'
         token = None
         data = {}
