@@ -16,7 +16,7 @@ class BoothMainComponent extends Component{
     constructor(){
         super();
 
-        this.socket = SocketIOClient('http://localhost:5000');
+        //this.socket = SocketIOClient('http://localhost:5000');
         
         this.state = {
             showSearch: true,
