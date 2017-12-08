@@ -15,7 +15,7 @@ def download(url, bid):
 
     song_title = subprocess.check_output([
         'youtube-dl', '--get-filename',
-        '--output', "%(title)s",
+        '--output', \"%(title)s\",
         url]).decode('ascii').strip()
 
     if os.path.exists('songs/' + bid + '/' + song_title):
