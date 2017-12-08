@@ -41,7 +41,7 @@ def fetch_public_booths():
 
 
 @app.route('/api/join_booth/<bid>', methods=['POST'])
-@jwt_required
+#@jwt_required
 def join_booth(bid):
     """
         Join a booth. Requires the booth ID. Returns the relevant details
