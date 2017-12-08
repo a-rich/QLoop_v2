@@ -10,7 +10,7 @@ export const userBooth = data => ({
 export function createPublicBooth(value, callBack) {
     return (dispatch) => {
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('QLoopJWT');
-        axios.post(`${ROOT_URL}/api/create_booth/`, value)
+        axios.post(`${ROOT_URL}/api/join_booth/${value.value}`, {username: JSON.parse(localStorage.getItem('data')).username})
             .then((data: res) => {
                 console.log(data);
                 localStorage.boothId = data.data.data.bid;
