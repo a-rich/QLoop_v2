@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import { ROOT_URL, FILE_MANAGEMENT } from '../types';
-
+import * as GeneralUtils from "../utils/GeneralUtils";
 
 export class FileManagement{
 
@@ -9,11 +9,18 @@ export class FileManagement{
     profileImageUpload(file, callback, progress){
         var fileInfo = file.target.files[0]
         var data = new FormData()
-
+        var user = GeneralUtils.getCurrentUser()
+        if(user == null){
+            callback(new Error('User Not Logged In'))
+            return
+        }else{
+            console.log("User logged in", user)
+        }
         data.append('files', fileInfo)
-
+        data.append("user", user)
+        
         var config = {
-            // headers: {'content-type': 'multipart/form-data' },
+            withCredentials: true,
             onUploadProgress: function(progressEvent) {
                 var percentCompleted = Math.round( (progressEvent.loaded * 100) / progressEvent.total );
                 progress(percentCompleted);
