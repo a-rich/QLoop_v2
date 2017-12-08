@@ -17,6 +17,11 @@ def join(json):
     join_room(booth_id)
 
 
+@socketio.on('disconnect')
+def disconnet():
+    user = User.objects.get(username=get_jwt_token())
+    user.creator_status=None
+
 @app.route('/')
 def index():
     return render_template('socket_client_code.html')
