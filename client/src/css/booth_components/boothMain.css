@@ -44,6 +44,7 @@
 }
 
 .music-controls-container{
+    margin-bottom: 20px;
     height: 10vh;
     /* margin-top: 10px; */
     background: #e6e6ec;

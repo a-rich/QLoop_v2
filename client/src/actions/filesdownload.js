@@ -25,6 +25,7 @@ export class FileManagement{
                 var percentCompleted = Math.round( (progressEvent.loaded * 100) / progressEvent.total );
                 progress(percentCompleted);
             }
+            
         }
 
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('QLoopJWT');

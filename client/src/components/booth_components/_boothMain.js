@@ -5,7 +5,9 @@ import "../../css/booth_components/boothMain.css";
 import  BoothMainQueueComponent  from "./BoothMainQueueComponent";
 import  BoothDjListComponent from "./BoothDjListComponent";
 import  BoothMyYtComponent from "./BoothMyYtComponent";
-import BoothSearchYtComponent from "./BoothSearchYtComponent";
+import  BoothSearchYtComponent from "./BoothSearchYtComponent";
+import  BootPlayBarComponent from "./BoothPlayBarComponent";
+
 class BoothMainComponent extends Component{
 
     constructor(){
@@ -43,6 +45,8 @@ class BoothMainComponent extends Component{
                     </div>
                 </div>
                 <div className={"music-controls-container"}>
+
+                            <BootPlayBarComponent> </BootPlayBarComponent>
                 
                 </div>
             </div>
