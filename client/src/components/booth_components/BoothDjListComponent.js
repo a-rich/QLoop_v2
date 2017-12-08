@@ -25,7 +25,7 @@ class BoothDjListComponent extends Component{
                             Djs 
                         </div>
                         <div className= {"invite-button-container"}>
-                        <button onClickonClick={<inviteDjOverlay/>} className ={"dj-list-item-button-invite-DJ w3-card-2"}>Invite DJ</button>
+                        <button onClick={<inviteDjOverlay/>} className ={"dj-list-item-button-invite-DJ w3-card-2"}>Invite DJ</button>
                         </div>
                        
                         </div>

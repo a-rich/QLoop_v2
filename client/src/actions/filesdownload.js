@@ -25,6 +25,7 @@ export class FileManagement{
                 var percentCompleted = Math.round( (progressEvent.loaded * 100) / progressEvent.total );
                 progress(percentCompleted);
             }
+            
         }
 
         axios.post(`${ROOT_URL}/api/users/edit_profile/`, data, config).then( (res) => {

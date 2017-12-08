@@ -21,6 +21,7 @@
     }
     
     .my-yt-search-full-size{
+        margin-top: 60px;
         height:40vh;
         width: 100%;
         /* background: black; */

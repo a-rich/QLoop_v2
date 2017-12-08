@@ -1,0 +1,48 @@
+.play-bar-item-containers{
+    height: 10vh;
+    min-height: 50px;
+    
+    display: grid;
+    width: 100%;
+    grid-template-rows: auto;
+    grid-template-columns: repeat(21, 1fr);
+    
+   
+    background: white;
+}
+.play-bar-item-song{
+    padding: auto;
+    font-size: 30px;
+    font-weight: 300;
+    margin-top: 1px;
+    height: 85px;
+    width: 400px;
+    margin: auto;
+    border: none;
+    grid-column: 1/5;
+}
+.play-bar-item-fav{
+    padding: auto;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    height: 80px;
+    width: 85px;
+    grid-column: 11/ 14;
+}
+.play-bar-item-skip {
+    padding: auto;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    height: 80px;
+    width: 85px;
+    grid-column: 15 / 18;
+}
+
+.play-bar-item-soundtoggle{
+    padding:auto;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    height: 80px;
+    width: 85px;
+    grid-column: 18/21;
+}
