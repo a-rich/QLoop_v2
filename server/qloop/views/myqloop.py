@@ -113,7 +113,8 @@ def find_users():
 
     search_string = request.get_json()['query']
     regex = re.compile('.*{}.*'.format(search_string))
-    users = User.objects((Q(email=regex) | Q(username=regex)) & Q(username__ne=get_jwt_identity())).only('username', 'email')
+    user = User.objects.get(username=get_jwt_identity())
+    users = User.objects((Q(email=regex) | Q(username=regex)) & Q(username__ne=user.username) & Q(username__nin=user.friends_list)).only('username', 'email')
 
     return json.dumps({'data': [(u['username'], u['profile_pic']) for u in users]})
 

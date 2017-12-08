@@ -34,7 +34,9 @@ class DashboardPage extends Component {
     }
 
     joinBooth(data){
-        this.props.joinBooth(data);
+        this.props.joinBooth(data, () => {
+            this.props.history.push('/booths/booth');
+        });
     }
 
     render() {

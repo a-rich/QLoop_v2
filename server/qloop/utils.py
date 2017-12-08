@@ -126,7 +126,8 @@ class BoothRegistry():
         return {"djs": b.dj_order,
                 "current_dj": b.dj_order[b.current_dj],
                 "queue": b.queue,
-                "current_song": current_song}
+                "current_song": current_song,
+                "bid": bid}
 
 
     def get_booth(self, bid):
