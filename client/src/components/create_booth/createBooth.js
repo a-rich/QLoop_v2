@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
+import { createPublicBooth } from '../../actions/createBooth';
 import { Image } from 'react-bootstrap';
 import "../../css/createBooth/create_booth.css";
 
@@ -13,8 +16,16 @@ class CreateBoothComponent extends Component{
     handleRadioChange(changeEvent){
         this.setState({
             selectedOption: changeEvent.target.value
-        })
-        console.log(this.state)
+        });
+    }
+
+    createBooth(){
+        const request = {
+            access_level : this.state.selectedOption
+        };
+        this.props.createPublicBooth(request, () => {
+            this.props.history.push('/booths/booth')
+        });
     }
 
     render(){
@@ -29,7 +40,7 @@ class CreateBoothComponent extends Component{
                             <div className="radio">
                             <label>
                                 <input type="radio" value="open" onChange={this.handleRadioChange.bind(this)} name="create-booth-option-radio" />
-                                Open
+                                Public
                             </label>
                             </div>
                             <div className="radio">
@@ -41,7 +52,7 @@ class CreateBoothComponent extends Component{
                                 this.state.selectedOption === "password" ? 
                                     <div>
                                         Password:
-                                        <input type="email" name="password"/><br/>
+                                        <input type="text" name="password"/><br/>
                                     </div> 
                                     : 
                                     <div> </div>
@@ -72,7 +83,7 @@ class CreateBoothComponent extends Component{
                     </div>
                     <div className={"button-container"}> 
                         <button className={"cancel"} >Cancel</button>
-                        <button className={"create"} >Create</button>
+                        <button className={"create"} onClick={this.createBooth.bind(this)} >Create</button>
                     </div>
                     
                     </div> 
@@ -81,4 +92,4 @@ class CreateBoothComponent extends Component{
         )
     }
 }
-export default CreateBoothComponent;
+export default connect(null, { createPublicBooth })(CreateBoothComponent);

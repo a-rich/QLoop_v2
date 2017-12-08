@@ -29,6 +29,7 @@ export function logout() {
     return (dispatch) => {
         localStorage.removeItem("QLoopJWT");
         localStorage.removeItem("data");
+        localStorage.removeItem("boothId");
         dispatch(userLoggedOut());
     }
 }

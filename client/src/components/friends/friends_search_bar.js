@@ -13,7 +13,7 @@ class FriendsSearchBar extends Component {
         return (
             <div className="search-bar">
                 <input
-                    placeholder="Search"
+                    placeholder="Search for new friends"
                     value = {this.state.term}
                     id="search-bar"
                     onChange={event => this.onInputChange(event.target.value)} />

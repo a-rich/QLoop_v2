@@ -6,6 +6,7 @@ import { Image, Grid, Row, Col , Well} from 'react-bootstrap';
 import FriendsList from '../friends/friends_list';
 import SongsList from '../dashboard_components/songs/songs_list';
 import { addFriend, removeFriend, getFriends } from '../../actions/friends'; 
+import { joinBooth } from '../../actions/createBooth';
 import { removeFavoriteSong } from '../../actions/index';
 import { ProfilePictureUploadComponent } from '../dashboard_components/profile_picture_upload_component'
 import ProfilePic from '../../profile_pic.jpg';
@@ -32,6 +33,10 @@ class DashboardPage extends Component {
         this.props.removeFavoriteSong(data);
     }
 
+    joinBooth(data){
+        this.props.joinBooth(data);
+    }
+
     render() {
 
         return(
@@ -51,6 +56,7 @@ class DashboardPage extends Component {
                         <Col xs={6} md={6}>
                             <Well bsSize="large">
                                 <FriendsList
+                                    joinBooth={this.joinBooth.bind(this)}
                                     removeFriend={this.removeFriend.bind(this)}
                                     addFriend={this.addFriend.bind(this)}
                                     getFriends={this.getFriends.bind(this)}
@@ -81,4 +87,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps, { addFriend, removeFriend, removeFavoriteSong, getFriends })(DashboardPage);
+export default connect(mapStateToProps, { addFriend, removeFriend, removeFavoriteSong, getFriends, joinBooth })(DashboardPage);

@@ -25,7 +25,7 @@ const App = ({ location }) => (
             <UserRoute location={location} path="/myQLoop" exact component={DashboardPage} />
             <UserRoute location={location} path="/booths/public" exact component={CreatePublicBoothComponent} />
             <UserRoute location={location} path="/booths/create" exact component={CreateBoothComponent} />
-            <UserRoute location={location} path="/booths/booth/:booth" exact component={BoothMainComponent} />
+            <UserRoute location={location} path="/booths/booth" exact component={BoothMainComponent} />
         </div>
     </div>
 );

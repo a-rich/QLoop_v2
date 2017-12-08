@@ -10,6 +10,7 @@ import promise from 'redux-promise';
 import reducers from './reducers';
 import App from './App';
 import { userLoggedIn } from './actions/auth';
+import { joinBooth } from './actions/createBooth';
 
 import registerServiceWorker from './registerServiceWorker';
 
@@ -24,6 +25,7 @@ if(localStorage.QLoopJWT) {
         data: JSON.parse(localStorage.data)
     };
     store.dispatch(userLoggedIn(user));
+    joinBooth(localStorage.boothId)
 }
 
 ReactDOM.render(

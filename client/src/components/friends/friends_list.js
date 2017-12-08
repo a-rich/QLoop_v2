@@ -11,7 +11,7 @@ import '../../css/dashboard_components/booth_main_queue_component_css.css';
 class FriendsList extends Component {
     constructor(props){
         super(props);
-        this.props.getFriends();
+
         this.state = {
             users: [],
             searched: false,
@@ -19,6 +19,10 @@ class FriendsList extends Component {
         };
 
         this.friendSearch('');
+    }
+
+    componentWillMount(){
+        this.props.getFriends();
     }
 
     friendSearch(term){
@@ -40,6 +44,10 @@ class FriendsList extends Component {
     }
 
     friends() {
+        if(Object.keys(this.props.friends).length === 0) {
+            return(<div>Loading...</div>);
+        }
+        
         var resultJSX = this.props.friends.map(friend => {
             return(
                 <div key = {friend[0]}>
@@ -48,6 +56,7 @@ class FriendsList extends Component {
                             removeFriend={this.props.removeFriend}
                             friend={friend}
                             friends={this.props.friends}
+                            joinBooth={this.props.joinBooth}
                         />
                     </div>
                 </div>
@@ -92,10 +101,10 @@ class FriendsList extends Component {
 }
 
 function mapStateToProps(state) {
-    var friends ={};
+    var friends =[];
 
     if(!state.credentials.jwt) {
-        return{}
+        return friends;
     }
     if (!state.friends) {
         friends = [];
