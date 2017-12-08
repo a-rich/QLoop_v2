@@ -50,3 +50,14 @@ def join_booth(bid):
 
     booth_details = booth_registry.join_booth(bid, get_jwt_identity())
     return json.dumps({'data': booth_details})
+
+
+@app.route('/api/get_booth/<bid>/', methods=['GET'])
+@jwt_required
+def get_booth(bid):
+    b = booth_registry.get_booth(bid)
+    return json.dumps({
+        'djs': b.dj_order,
+        'current_dj': b.dj_order[b.current_dj],
+        'queue': b.queue,
+        'current_song': current_song})
