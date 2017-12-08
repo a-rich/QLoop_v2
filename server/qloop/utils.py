@@ -8,6 +8,7 @@ from pydub import AudioSegment
 import io
 
 def download(url, bid):
+    url = "https://www.youtube.com/watch?v={}".format(url)
     path = 'songs/{}'.format(bid)
     if not os.path.isdir(path):
         os.makedirs(path)
