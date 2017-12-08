@@ -33,7 +33,6 @@ export function getFriends() {
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('QLoopJWT');
         axios.get(`${ROOT_URL}/api/get_friends/`)
             .then((data: res) => {
-                localStorage.friends = JSON.stringify(data.data.friends);
             dispatch({
                     type: GET_FRIENDS,
                     payload: data
