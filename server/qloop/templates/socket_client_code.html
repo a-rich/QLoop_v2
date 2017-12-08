@@ -22,12 +22,14 @@
 
     var socket = io.connect('http://' + document.domain + ':' + location.port);
     socket.on('connect', function() {
-        socket.emit('join', {'booth_id': 0});
+        console.log("connecting");
+        socket.emit('join', {'booth_id': 1});
     });
     socket.on('new song', function() {
         // implement later
     });
     socket.on('song data', function(data) {
+        console.log("Receiving song data...");
         if (start) {
             sourceBuffer.appendBuffer(data);
             start = false;
