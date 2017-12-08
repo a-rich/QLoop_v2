@@ -124,7 +124,7 @@ def confirm_account_recovery(token):
         return redirect('http://www.google.com')
 
     errors = {}
-    password = request.get_json()['password']
+    password = generate_password_hash(request.get_json()['password'])
 
     try:
         email = ts.loads(token, salt='account-recovery-key', max_age=21600)
