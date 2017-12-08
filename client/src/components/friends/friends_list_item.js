@@ -6,7 +6,7 @@ class FriendsListItem extends Component{
 
     isFriend() {
         for(var i=0; i<this.props.friends.length; i++) {
-            if(this.props.friends[i].username === this.props.friend.username){
+            if(this.props.friends[i][0] === this.props.friend[0]){
                 return true;
             }
         }

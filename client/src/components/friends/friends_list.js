@@ -5,14 +5,13 @@ import axios from 'axios';
 
 import FriendsListItem from './friends_list_item'
 import FriendsSearchBar from './friends_search_bar';
-import { mapper } from '../../utils/misc';
 import { ROOT_URL } from '../../types';
 import '../../css/dashboard_components/booth_main_queue_component_css.css';
 
 class FriendsList extends Component {
     constructor(props){
         super(props);
-
+        this.props.getFriends();
         this.state = {
             users: [],
             searched: false,
@@ -41,7 +40,6 @@ class FriendsList extends Component {
     }
 
     friends() {
-        console.log(this.props.friends);
         var resultJSX = this.props.friends.map(friend => {
             return(
                 <div key = {friend[0]}>
@@ -77,6 +75,7 @@ class FriendsList extends Component {
     }
 
     render() {
+        //this.props.getFriends();
         const friendSearch = _.debounce((term) => { this.friendSearch(term) }, 500);
 
         return(

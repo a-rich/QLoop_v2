@@ -17,12 +17,15 @@ import '../../css/dashboard_components/main.css';
 class DashboardPage extends Component {
 
     addFriend(data) {
-        console.log(data)
         this.props.addFriend(data);
     }
 
     removeFriend(data) {
         this.props.removeFriend(data);
+    }
+
+    getFriends() {
+        this.props.getFriends();
     }
 
     removeFavoriteSong(data) {
@@ -50,6 +53,7 @@ class DashboardPage extends Component {
                                 <FriendsList
                                     removeFriend={this.removeFriend.bind(this)}
                                     addFriend={this.addFriend.bind(this)}
+                                    getFriends={this.getFriends.bind(this)}
                                 />
                             </Well>
                         </Col>
@@ -77,4 +81,4 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps, { addFriend, removeFriend, removeFavoriteSong })(DashboardPage);
+export default connect(mapStateToProps, { addFriend, removeFriend, removeFavoriteSong, getFriends })(DashboardPage);

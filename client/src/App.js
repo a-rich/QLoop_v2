@@ -3,6 +3,7 @@ import { Route } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import SignupForm from './containers/signup_form';
+import HomePage from './components/pages/home_page';
 import LoginPage from './components/pages/login_page';
 import NavbarComponent from './components/navbar_component';
 import DashboardPage from './components/pages/dashboard_page';
@@ -17,7 +18,7 @@ const App = ({ location }) => (
     <div>
         <NavbarComponent />
         <div className = "container">
-            <Route path="/" exact component={LoginPage} />
+            <Route path="/" exact component={HomePage} />
             <GuestRoute location={location} path="/signup" exact component={SignupForm} />
             <GuestRoute location={location} path="/login" exact component={LoginPage} />
             <GuestRoute location={location} path="/reset_password/:token" exact component={ResetPasswordPage} />
