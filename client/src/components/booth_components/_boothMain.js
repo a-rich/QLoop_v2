@@ -38,6 +38,12 @@ class BoothMainComponent extends Component{
             return dataLoop;
 }*/
 
+/*
+<div className={"djs-queue-container w3-card-4"}>
+                        <BoothDjListComponent> </BoothDjListComponent>
+                    </div> 
+*/
+
     render(){
         return(
             <div className={"main-wrapper"}>
@@ -45,9 +51,7 @@ class BoothMainComponent extends Component{
                     <div className={"main-queue-container w3-card-4"}>
                         <BoothMainQueueComponent> </BoothMainQueueComponent>
                     </div> 
-                    <div className={"djs-queue-container w3-card-4"}>
-                        <BoothDjListComponent> </BoothDjListComponent>
-                    </div> 
+                    
                     <div className={"bottom-container"}>
                         <div className={"w3-card-4"}>
                             {

@@ -21,8 +21,7 @@ class CreateBoothComponent extends Component{
 
     createBooth(){
         const request = {
-            access_level : this.state.selectedOption,
-            value : 1
+            access_level : this.state.selectedOption
         };
         this.props.createPublicBooth(request, () => {
             this.props.history.push('/booths/booth/1');
