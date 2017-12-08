@@ -13,6 +13,7 @@ export const ROOT_URL = 'http://localhost:5000';
 //booth related types
 export const CREATE_PUBLIC_BOOTH = 'create_public_booth';
 export const JOIN_BOOTH = 'join_public_booth';
+export const GET_BOOTH = 'get_booth';
 
 export const FILE_MANAGEMENT = {
     PROFILE_PICTURE_UPLOAD : "profile_picture_upload"
