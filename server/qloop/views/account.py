@@ -28,6 +28,7 @@ def create_account():
     email = req['email']
     username = req['username']
     password = req['password']
+    confirm_password = req['confirmPassword']
 
     errors = User.check_for_existing_user(email, username)
 

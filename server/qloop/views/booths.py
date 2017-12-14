@@ -53,7 +53,6 @@ def join_booth(bid):
 
 
 @app.route('/api/get_booth/<bid>/', methods=['GET'])
-@jwt_required
 def get_booth(bid):
     b = booth_registry.get_booth(bid)
     return json.dumps({

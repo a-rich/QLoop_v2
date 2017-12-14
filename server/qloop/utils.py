@@ -48,11 +48,13 @@ def send_email(user_email, subject, html):
     msg['From'] = email.utils.formataddr(('QLoop', 'qloop.signup@gmail.com'))
     msg['Subject'] = subject
 
-    server = smtplib.SMTP('smtp.gmail.com', 587)
     try:
+        server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
         server.login('qloop.signup@gmail.com', ')F}Uw2B[)zDy8.{z')
         server.sendmail('qloop.signup@gmail.com', user_email, msg.as_string())
+    except Error as e:
+        print("Email error:", e)
     finally:
         server.quit()
 

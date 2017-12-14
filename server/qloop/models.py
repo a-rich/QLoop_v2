@@ -26,8 +26,6 @@ class User(db.Document):
     def check_for_existing_user(email, username):
         errors = {}
 
-        if User.objects(email=email):
-            errors['email'] = 'A user with this email has already created an account'
         if User.objects(username=username):
             errors['username'] = 'A user with this username has already created an account.'
 

@@ -16,8 +16,56 @@ class BoothMainComponent extends Component{
     constructor(){
         super();
 
-        //this.socket = SocketIOClient('http://localhost:5000');
-        
+        window.MediaSource = window.MediaSource || window.WebKitMediaSource;
+
+        function onSourceOpen(e) {
+          sourceBuffer = ms.addSourceBuffer('audio/mpeg');
+          sourceBuffer.addEventListener('updateend', function() {
+              if (queue.length) {
+                  sourceBuffer.appendBuffer(queue.shift());
+              }
+          }, false);
+        }
+
+        var ms = new MediaSource();
+        ms.addEventListener('sourceopen', onSourceOpen.bind(ms), false);
+        var sourceBuffer = null;
+        var queue = [];
+        var start = true;
+        var audio = document.querySelector('audio');
+        audio.src = window.URL.createObjectURL(ms);
+
+        //////////////////////////////////////////////////////////////
+        // This part works by itself
+        const socket = SocketIOClient('http://localhost:5000', {
+            extraHeaders: {
+                Authorization: localStorage.getItem('QLoopJWT')
+            }
+        });
+
+        socket.on('connect', function (data) {
+            console.log("Client connecting on booth join");
+            console.log(data);
+            socket.emit('join', {'booth_id': 1});
+        });
+
+        socket.on('connect', function() {
+            socket.emit('join', {'booth_id': 1});
+        });
+        //////////////////////////////////////////////////////////////
+
+        socket.on('new song', function() {
+        });
+
+        socket.on('song data', function(data) {
+            if (start) {
+                sourceBuffer.appendBuffer(data);
+                start = false;
+            } else {
+                queue.push(data);
+            }
+        });
+
         this.state = {
             showSearch: true,
         }
@@ -28,7 +76,7 @@ class BoothMainComponent extends Component{
     }
 
     /*getBoothData() {
-        const friendSearch = _.debounce((term) => { 
+        const friendSearch = _.debounce((term) => {
             this.props.getBoothData()
         }, 10000);
         /*var dataLoop = _.debounce(this.props.getBoothData(()=> {
@@ -42,8 +90,8 @@ class BoothMainComponent extends Component{
 /*
 <div className={"djs-queue-container w3-card-4"}>
                         <BoothDjListComponent> </BoothDjListComponent>
-                    </div> 
-*/  
+                    </div>
+*/
     getData(data) {
 
     }
@@ -54,20 +102,20 @@ class BoothMainComponent extends Component{
                 <div className={"grid-container"}>
                     <div className={"main-queue-container w3-card-4"}>
                         <BoothMainQueueComponent> </BoothMainQueueComponent>
-                    </div> 
-                    
+                    </div>
+
                     <div className={"bottom-container"}>
                         <div className={"w3-card-4"}>
                             {
-                                this.state.showSearch === false 
-                                ?<BoothMyYtComponent> </BoothMyYtComponent> 
+                                this.state.showSearch === false
+                                ?<BoothMyYtComponent> </BoothMyYtComponent>
                                 :<div> </div>
                             }
                         </div>
-                        <div className={" w3-card-4"}> 
+                        <div className={" w3-card-4"}>
                             {
-                                this.state.showSearch === true 
-                                ?<BoothSearchYtComponent getData={this.getData.bind(this)}> </BoothSearchYtComponent> 
+                                this.state.showSearch === true
+                                ?<BoothSearchYtComponent getData={this.getData.bind(this)}> </BoothSearchYtComponent>
                                 :<div> </div>
                             }
                         </div>
@@ -76,7 +124,7 @@ class BoothMainComponent extends Component{
                 <div className={"music-controls-container"}>
 
                             <BootPlayBarComponent> </BootPlayBarComponent>
-                
+
                 </div>
             </div>
         )

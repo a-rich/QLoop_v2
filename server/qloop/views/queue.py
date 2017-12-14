@@ -1,6 +1,7 @@
 import json
 from qloop import app, socketio
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
+from flask import session
 from flask import request, render_template
 from qloop.models import User, Song, booth_registry
 from flask_jwt_simple import jwt_required, get_jwt_identity
@@ -13,22 +14,23 @@ def join(json):
         a user creates a booth (creating implies joining).
     """
 
+    print("Flask join socket event firing")
     booth_id = json['booth_id']
     join_room(booth_id)
 
 
-"""
 @socketio.on('connect')
 def connect():
-    user = User.objects.get(username=get_jwt_identity())
-    user.creator_status=None
+    print("\n\n\nFlask connect socket event firing: {}\n\n\n".format('stuff'))
+    #user = User.objects.get(username=get_jwt_identity())
+    #user.creator_status=None
 
 
 @socketio.on('disconnect')
 def disconnet():
-    user = User.objects.get(username=get_jwt_identity())
-    user.creator_status=None
-"""
+    print("\n\n\nFlask disconnect socket event firing: {}\n\n\n".format('stuff'))
+    #user = User.objects.get(username=get_jwt_identity())
+    #user.creator_status=None
 
 @app.route('/')
 def index():
