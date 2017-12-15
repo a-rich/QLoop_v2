@@ -38,7 +38,7 @@ export function joinBooth(value, callback) {
     }
 }
 
-export function fetchBooths(value, callback) {
+export function fetchBooths() {
     console.log("top of fetchBooths");
     return (dispatch) => {
         console.log("Just before get request");
@@ -46,7 +46,6 @@ export function fetchBooths(value, callback) {
         axios.get(`${ROOT_URL}/api/booths/`)
             .then((data: res) => {
                 console.log("fetched data: " + data);
-                callback();
                 dispatch({
                     type: FETCH_BOOTHS,
                     payload: data

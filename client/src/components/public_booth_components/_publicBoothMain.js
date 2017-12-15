@@ -14,7 +14,7 @@ class CreatePublicBoothComponent extends Component{
         }
         //this.createFakeBoothObjects();
         console.log("just before calling fetch booths in public booths constructor");
-        fetchBooths();
+        this.props.fetchBooths();
         console.log("just after calling fetch booths in public booths constructor");
     }
 
