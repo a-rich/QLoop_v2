@@ -4,6 +4,9 @@ QLoop
 Installation
 -------------------------
 
+### Setting up MongoDB ###
+Follow these installation instructions for [Mac](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/), [Windows](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/), and [Linux](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/) to setup `mongo` as a daemon on your machine.
+
 ### Clone repository ###
 `git clone https://github.com/Aweeeezy/QLoop_v2.git`
 
@@ -20,8 +23,6 @@ Installation
 `pip3 install -e .`
 
 `export FLASK_APP=qloop`
-
-`export FLASK_DEBUG=true`
 
 #### Run Flask server ####
 `flask run`
