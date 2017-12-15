@@ -21,6 +21,10 @@ def join(json):
 
 @socketio.on('connect')
 def connect():
+    """
+        On connect event initiated when a user joins a booth.
+    """
+
     print("\n\n\nFlask connect socket event firing: {}\n\n\n".format('stuff'))
     #user = User.objects.get(username=get_jwt_identity())
     #user.creator_status=None
@@ -28,13 +32,14 @@ def connect():
 
 @socketio.on('disconnect')
 def disconnet():
+    """
+        On disconnect event initiated when a user leaves the domain/closes tab.
+    """
+
     print("\n\n\nFlask disconnect socket event firing: {}\n\n\n".format('stuff'))
     #user = User.objects.get(username=get_jwt_identity())
     #user.creator_status=None
 
-@app.route('/')
-def index():
-    return render_template('socket_client_code.html')
 
 """
    *****************************************
@@ -70,6 +75,7 @@ def enqueue_song():
 @jwt_required
 def favorite_song():
     """
+        Adds the clicked on song to the user's favorite songs list.
     """
     # TODO: test favorite_song endpoint
 
@@ -84,6 +90,8 @@ def favorite_song():
 @jwt_required
 def skip_song():
     """
+        Records a skip vote for the clicked on song. If the vote ratio is >=
+        0.5, the next track will begin streaming instead.
     """
     # TODO: test skip_song endpoint
 

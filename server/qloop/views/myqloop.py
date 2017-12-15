@@ -52,6 +52,10 @@ def fetch_profile():
 @app.route('/api/get_friends/', methods=['GET'])
 @jwt_required
 def get_friends():
+    """
+        Get updated friends list when adding/removing a friend from the view.
+    """
+
     user = User.objects.get(username=get_jwt_identity())
     friends = [User.objects.get(username=f) for f in user.friends_list]
     friends = [(f['username'], f['email'], f['creator_status'], f['profile_pic'])

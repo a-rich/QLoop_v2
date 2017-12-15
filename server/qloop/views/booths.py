@@ -54,6 +54,10 @@ def join_booth(bid):
 
 @app.route('/api/get_booth/<bid>/', methods=['GET'])
 def get_booth(bid):
+    """
+        Returns updated booth information when the view requests it.
+    """
+
     b = booth_registry.get_booth(bid)
     return json.dumps({
         'djs': b.dj_order,

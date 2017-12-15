@@ -8,6 +8,12 @@ from pydub import AudioSegment
 import io
 
 def download(url, bid):
+    """
+        Uses `youtube-dl` to check if songs already exist in the booth's song
+        folder, get the video's title, download the video, extract mp3 before
+        deleting the video, and returning song data to the view.
+    """
+
     url = "https://www.youtube.com/watch?v={}".format(url)
     path = 'songs/{}'.format(bid)
     if not os.path.isdir(path):
@@ -40,7 +46,8 @@ def download(url, bid):
 
 def send_email(user_email, subject, html):
     """
-        Sends an account activation email to the user.
+        Sends an account activation email to the user. Also used to send
+        account recovery emails.
     """
 
     msg = MIMEText(html, 'html')
@@ -57,11 +64,6 @@ def send_email(user_email, subject, html):
         print("Email error:", e)
     finally:
         server.quit()
-
-
-def allowed_file(filename):
-    allowed_extensions = set(['png', 'jpg', 'jpeg', 'gif'])
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
 
 class BoothRegistry():
@@ -159,6 +161,10 @@ class Booth():
 
 
     def play_song(self, song_path):
+        """
+            Chunk mp3 data and emit the chunks as socket events.
+        """
+
         song = AudioSegment.from_mp3(song_path)
         FRAME_CHUNK_SIZE = 1000
 
@@ -237,6 +243,10 @@ class Booth():
 
 
     def log_skip_vote(self, url):
+        """
+            Implements the `skip song` feature.
+        """
+
         song = [s for s in self.queue if s['song']['url'] == url][0]
         song['skip_count'] += 1
 

@@ -4,7 +4,6 @@ from flask_cors import CORS
 from flask_jwt_simple import JWTManager
 from flask_socketio import SocketIO
 
-UPLOAD_FOLDER = 'static/imgs/'
 
 def create_app():
     app = Flask(__name__)
@@ -13,7 +12,7 @@ def create_app():
     app.config['JWT_SECRET_KEY'] = "fzgk0+\!>~mi`#l'"
     app.config['JWT_EXPIRES'] = datetime.timedelta(days=7)
     app.config['MONGOALCHEMY_DATABASE'] = 'database'
-    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    app.config['UPLOAD_FOLDER'] = 'static/imgs/'
 
     jwt = JWTManager(app)
 
