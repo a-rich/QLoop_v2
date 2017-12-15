@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { CREATE_PUBLIC_BOOTH, JOIN_BOOTH, GET_BOOTH } from '../types';
+import { CREATE_PUBLIC_BOOTH, JOIN_BOOTH, GET_BOOTH, FETCH_BOOTHS} from '../types';
 import { ROOT_URL } from '../types';
 
 export const userBooth = data => ({
@@ -19,7 +19,7 @@ export function createPublicBooth(value, callBack) {
                     type: CREATE_PUBLIC_BOOTH,
                     payload: data
             });
-                
+
         });
     }
 }
@@ -35,6 +35,23 @@ export function joinBooth(value, callback) {
                     payload: data
             });
         });
+    }
+}
+
+export function fetchBooths(value, callback) {
+    console.log("top of fetchBooths");
+    return (dispatch) => {
+        console.log("Just before get request");
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('QLoopJWT');
+        axios.get(`${ROOT_URL}/api/booths/`)
+            .then((data: res) => {
+                console.log("fetched data: " + data);
+                callback();
+                dispatch({
+                    type: FETCH_BOOTHS,
+                    payload: data
+                });
+            });
     }
 }
 

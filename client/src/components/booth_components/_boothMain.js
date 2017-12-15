@@ -35,8 +35,6 @@ class BoothMainComponent extends Component{
         var audio = document.querySelector('audio');
         audio.src = window.URL.createObjectURL(ms);
 
-        //////////////////////////////////////////////////////////////
-        // This part works by itself
         const socket = SocketIOClient('http://localhost:5000', {
             extraHeaders: {
                 Authorization: localStorage.getItem('QLoopJWT')
@@ -48,11 +46,6 @@ class BoothMainComponent extends Component{
             console.log(data);
             socket.emit('join', {'booth_id': 1});
         });
-
-        socket.on('connect', function() {
-            socket.emit('join', {'booth_id': 1});
-        });
-        //////////////////////////////////////////////////////////////
 
         socket.on('new song', function() {
         });

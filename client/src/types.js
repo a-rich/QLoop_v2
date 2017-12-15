@@ -15,6 +15,7 @@ export const API_KEY = 'AIzaSyDoJcoLWjDqAvHweKQ0GjILu8pSHZEUKjQ';
 //booth related types
 export const CREATE_PUBLIC_BOOTH = 'create_public_booth';
 export const JOIN_BOOTH = 'join_public_booth';
+export const FETCH_BOOTHS = 'fetch_public_booths';
 export const GET_BOOTH = 'get_booth';
 
 //QUEUE related types

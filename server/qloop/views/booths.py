@@ -36,7 +36,9 @@ def fetch_public_booths():
         tuples of the form (BOOTH_ID, CREATOR, CURRENT_SONG, ACCESS_LEVEL).
     """
 
+    print("fetching booths...");
     data = booth_registry.show_booths()
+    print("fetch booth data is", data)
     return json.dumps({'data': data})
 
 

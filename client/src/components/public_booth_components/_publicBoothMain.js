@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Image} from 'react-bootstrap';
+import { fetchBooths } from '../../actions/createBooth';
 
 import PublicConformationPageOverlay from '../overlays/public_booth_overlays/public_conformation_page_overlay';
 import "../../css/public_booth_components/public_booth_main.css"
@@ -9,16 +10,24 @@ class CreatePublicBoothComponent extends Component{
         super();
         this.state = {
             boothObjects: []
-
         }
-        this.createFakeBoothObjects();
-
+        //this.createFakeBoothObjects();
+        console.log("just before calling fetch booths in public booths constructor");
+        fetchBooths();
+        console.log("just after calling fetch booths in public booths constructor");
     }
+
+    joinBooth(data){
+        this.props.joinBooth(data, () => {
+            this.props.history.push('/booths/booth/1');
+        });
+    }
+
     render(){
         return(
             <div className={"main-wrapper"}>
                     <div className={"grid-container"}>
-                
+
                             <div className={"create-public-booth-container w3-card-4"}>
 
                                 <div className= {"public-booth-non-scrollable"}>
@@ -28,24 +37,24 @@ class CreatePublicBoothComponent extends Component{
                                 </div>
                                     <div className= {"public-booth-scrollable"}>
                                         {this.generateListOfBoothsJSX()}
-                                    
+
                                 </div>
 
                         </div>
 
-                               
-                    </div>  
-            </div> 
-       
+
+                    </div>
+            </div>
+
         );
 
     }
-    
+
     generateListOfBoothsJSX(){
         var resultArr = this.state.boothObjects.map((item, i)=>{ return(
             /*<div className= {"cardViewForContent-grid w3-card-4"}>
             <div className={"public-list-item-grid"}>
-        
+
             <div className="public-list-container">
                 <span className = {"main-queue-song-in-progress"}>{item.title}</span>
                 <br/><span className = {"public-booth-creator"}> Creator : {item.creator}</span>
@@ -108,7 +117,7 @@ class CreatePublicBoothComponent extends Component{
         ];
         console.log(boothObjects);
         this.setBoothObject(boothObjects);
-        
+
     }
 }
 export default CreatePublicBoothComponent;
