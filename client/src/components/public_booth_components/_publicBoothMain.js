@@ -7,12 +7,12 @@ import PublicConformationPageOverlay from '../overlays/public_booth_overlays/pub
 import "../../css/public_booth_components/public_booth_main.css"
 
 class CreatePublicBoothComponent extends Component{
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state = {
             boothObjects: []
         }
-        //this.createFakeBoothObjects();
+
         console.log("just before calling fetch booths in public booths constructor");
         this.props.fetchBooths();
         console.log("just after calling fetch booths in public booths constructor");
