@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import { connect } from 'react-redux';
 import {Image} from 'react-bootstrap';
 import { fetchBooths } from '../../actions/createBooth';
 
@@ -120,4 +121,4 @@ class CreatePublicBoothComponent extends Component{
 
     }
 }
-export default CreatePublicBoothComponent;
+export default connect(null, { fetchBooths })(CreatePublicBoothComponent);
